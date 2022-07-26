@@ -1,13 +1,17 @@
 package com.github.attacktive.troubleshootereditor.sqlite
 
-import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import java.io.File
+import kotlin.test.Test
 
-class SqliteServiceTest(private val sqliteService: SqliteService) {
+@SpringBootTest
+class SqliteServiceTest(@Autowired private val sqliteService: SqliteService) {
 	@Test
 	fun testBasic() {
-		/*
-		 * Before running it, put 'game.save' file to 'app.file.path-to-upload'
-		 */
-		sqliteService.run("game.save")
+		val url = SqliteServiceTest::class.java.classLoader.getResource("game.save")
+		val file = File(url!!.toURI())
+		val saveData = sqliteService.read(file)
+		println(saveData)
 	}
 }

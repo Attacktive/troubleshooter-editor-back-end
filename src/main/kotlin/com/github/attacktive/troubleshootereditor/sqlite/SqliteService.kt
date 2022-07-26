@@ -12,8 +12,12 @@ import java.sql.DriverManager
 class SqliteService(private val propertiesConfiguration: PropertiesConfiguration) {
 	private val logger = LoggerFactory.getLogger(SqliteService::class.java)
 
-	fun run(fileName: String): SaveData? {
+	fun read(fileName: String): SaveData? {
 		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
+		return read(file)
+	}
+
+	fun read(file: File): SaveData? {
 		val url = "jdbc:sqlite:${file.absolutePath}"
 		DriverManager.getConnection(url).use { connection ->
 			var statement = connection.prepareStatement(
