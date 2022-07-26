@@ -16,7 +16,7 @@ class UploadController(private val uploadService: UploadService, private val sql
 	fun upload(@RequestPart("file") multipartFile: MultipartFile): Any {
 		logger.info("${multipartFile.name} (size: ${multipartFile.size})")
 		val savedFileName = uploadService.saveFile(multipartFile)
-		sqliteService.run(savedFileName)
+		sqliteService.read(savedFileName)
 
 		return mapOf("x" to "y")
 	}
