@@ -30,6 +30,7 @@ dependencies {
 	implementation("org.xerial:sqlite-jdbc")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation(kotlin("test"))
 }
 
 tasks.withType<KotlinCompile> {
