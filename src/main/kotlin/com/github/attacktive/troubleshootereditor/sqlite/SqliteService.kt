@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.upload
+package com.github.attacktive.troubleshootereditor.sqlite
 
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import com.github.attacktive.troubleshootereditor.model.SaveData
