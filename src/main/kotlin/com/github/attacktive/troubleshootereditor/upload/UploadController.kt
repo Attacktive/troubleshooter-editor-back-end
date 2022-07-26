@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.upload
 
-import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
+import com.github.attacktive.troubleshootereditor.sqlite.SqliteService
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
