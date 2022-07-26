@@ -42,12 +42,12 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 					""".trimIndent()
 				)
 
-				val properties = mapOf<String, String>()
+				val properties = mutableMapOf<String, String>()
 				statement.executeQuery().use { propertiesResultSet ->
 					while (propertiesResultSet.next()) {
 						val key = propertiesResultSet.getString("masterName")
 						val value = propertiesResultSet.getString("cpValue")
-						properties.map { key to value }
+						properties[key] = value
 					}
 				}
 
