@@ -1,1 +1,1 @@
-rootProject.name = "troubleshooter-editor-"
+rootProject.name = "troubleshooter-editor"
