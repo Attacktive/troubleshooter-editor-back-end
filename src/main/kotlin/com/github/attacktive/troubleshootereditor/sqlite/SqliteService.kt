@@ -2,10 +2,11 @@ package com.github.attacktive.troubleshootereditor.sqlite
 
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import com.github.attacktive.troubleshootereditor.extension.findById
-import com.github.attacktive.troubleshootereditor.model.SaveData
 import com.github.attacktive.troubleshootereditor.model.Company
+import com.github.attacktive.troubleshootereditor.model.Item
 import com.github.attacktive.troubleshootereditor.model.Quest
 import com.github.attacktive.troubleshootereditor.model.Roster
+import com.github.attacktive.troubleshootereditor.model.SaveData
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.File
@@ -27,8 +28,9 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			val company = selectCompany(it)
 			val quests = selectQuests(it)
 			val rosters = selectRosters(it)
+			val items = selectItems(it)
 
-			return SaveData(company, quests, rosters)
+			return SaveData(company, quests, rosters, items)
 		}
 	}
 
@@ -144,5 +146,39 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		}
 
 		return rosters.toList()
+	}
+
+	private fun selectItems(connection: Connection): List<Item> {
+		val statement = connection.prepareStatement(
+			"""
+				select
+					i.itemID,
+					i.itemType,
+					i.itemCount,
+					ism.masterName,
+					iif(ipm.masterIndex is null, '{}', json_group_object(ipm.masterName, ip.propValue)) as properties
+				from item i
+					left join itemStatusMaster ism on i.itemStatus = ism.masterIndex
+					left join itemProperty ip on i.itemID = ip.itemID
+					left join itemPropertyMaster ipm on ip.masterIndex = ipm.masterIndex
+				group by i.itemID, i.itemType, i.itemCount, ism.masterName
+			""".trimIndent()
+		)
+
+		val items = mutableSetOf<Item>()
+		statement.executeQuery().use {
+			while (it.next()) {
+				val id = it.getLong("itemID")
+				val type = it.getString("itemType")
+				val count = it.getLong("itemCount")
+				val status = it.getString("masterName")
+				val properties = it.getString("properties")
+
+				val item = Item(id, type, count, status, properties)
+				items.add(item)
+			}
+		}
+
+		return items.toList()
 	}
 }
