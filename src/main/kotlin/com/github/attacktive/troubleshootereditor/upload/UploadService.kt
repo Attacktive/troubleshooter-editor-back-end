@@ -1,6 +1,7 @@
 package com.github.attacktive.troubleshootereditor.upload
 
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -9,6 +10,8 @@ import java.util.UUID
 
 @Service
 class UploadService(private val propertiesConfiguration: PropertiesConfiguration) {
+	private val logger = LoggerFactory.getLogger(UploadService::class.java)
+
 	fun saveFile(multipartFile: MultipartFile): String {
 		val directory = File(propertiesConfiguration.file.pathToUpload)
 		if (!directory.exists()) {
@@ -17,11 +20,23 @@ class UploadService(private val propertiesConfiguration: PropertiesConfiguration
 
 		val fileName = "${UUID.randomUUID()}.db"
 		val file = File(directory, fileName)
+
+		logger.info("Uploaded file ${multipartFile.originalFilename} is temporarily saved as \"${file.absolutePath}\".")
+
 		val fileOutputStream = FileOutputStream(file)
 		fileOutputStream.use {
 			it.write(multipartFile.bytes)
 		}
 
 		return fileName
+	}
+
+	fun deleteFile(fileName: String) {
+		val directory = File(propertiesConfiguration.file.pathToUpload)
+		val file = File(directory, fileName)
+
+		if (!file.delete()) {
+			logger.warn("Failed to delete file \"${file.absolutePath}\".")
+		}
 	}
 }
