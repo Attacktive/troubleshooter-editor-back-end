@@ -1,14 +1,14 @@
 package com.github.attacktive.troubleshootereditor.model
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 data class SaveData(
 	val company: Company,
 	val quests: List<Quest>,
-	val rosters: List<Roster>
+	val rosters: List<Roster>,
+	val items: List<Item>
 ) {
 	override fun toString(): String {
-		val objectMapper = ObjectMapper()
-		return objectMapper.writeValueAsString(this)
+		return jacksonObjectMapper().writeValueAsString(this)
 	}
 }
