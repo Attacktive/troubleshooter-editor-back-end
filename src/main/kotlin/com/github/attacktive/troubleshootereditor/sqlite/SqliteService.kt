@@ -24,7 +24,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		val url = "jdbc:sqlite:${file.absolutePath}"
 		DriverManager.getConnection(url).use {
 			val company = selectCompany(it)
-			val quests = selectQuest(it)
+			val quests = selectQuests(it)
 
 			return SaveData(company, quests)
 		}
@@ -65,7 +65,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		return company!!
 	}
 
-	private fun selectQuest(connection: Connection): List<Quest> {
+	private fun selectQuests(connection: Connection): List<Quest> {
 		val statement = connection.prepareStatement(
 			"""
 				select
