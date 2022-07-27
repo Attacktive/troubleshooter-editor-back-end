@@ -1,10 +1,11 @@
 package com.github.attacktive.troubleshootereditor.sqlite
 
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
-import com.github.attacktive.troubleshootereditor.extension.findByIndex
+import com.github.attacktive.troubleshootereditor.extension.findById
 import com.github.attacktive.troubleshootereditor.model.SaveData
 import com.github.attacktive.troubleshootereditor.model.Company
 import com.github.attacktive.troubleshootereditor.model.Quest
+import com.github.attacktive.troubleshootereditor.model.Roster
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.File
@@ -25,8 +26,9 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		DriverManager.getConnection(url).use {
 			val company = selectCompany(it)
 			val quests = selectQuests(it)
+			val rosters = selectRosters(it)
 
-			return SaveData(company, quests)
+			return SaveData(company, quests, rosters)
 		}
 	}
 
@@ -85,7 +87,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		statement.executeQuery().use {
 			while (it.next()) {
 				val index = it.getLong("questIndex")
-				var quest = quests.findByIndex(index)
+				var quest = quests.findById(index)
 				if (quest == null) {
 					val name = it.getString("masterName")
 					val stage = it.getLong("questStage")
@@ -101,5 +103,46 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		}
 
 		return quests.toList()
+	}
+
+	private fun selectRosters(connection: Connection): List<Roster> {
+		val statement = connection.prepareStatement(
+			"""
+				select
+					r.rosterID,
+					r.rosterName,
+					r.rosterClass,
+					r.rosterLv,
+					r.rosterExp,
+					rpm.masterName,
+					rp.rpValue
+				from roster r
+					left join rosterProperty rp on r.rosterID = rp.rosterID
+					left join rosterPropertyMaster rpm on rp.masterIndex = rpm.masterIndex
+			""".trimIndent()
+		)
+
+		val rosters = mutableSetOf<Roster>()
+		statement.executeQuery().use {
+			while (it.next()) {
+				val id = it.getLong("rosterID")
+				var roster = rosters.findById(id)
+				if (roster == null) {
+					val name = it.getString("rosterName")
+					val `class` = it.getString("rosterClass")
+					val level = it.getLong("rosterLv")
+					val exp = it.getLong("rosterExp")
+					roster = Roster(id, name, `class`, level, exp)
+					rosters.add(roster)
+				}
+
+				val propertyName = it.getString("masterName")
+				val propertyValue = it.getString("rpValue")
+
+				roster.properties[propertyName] = propertyValue
+			}
+		}
+
+		return rosters.toList()
 	}
 }
