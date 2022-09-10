@@ -9,7 +9,7 @@ import kotlin.test.Test
 class SqliteServiceTest(@Autowired private val sqliteService: SqliteService) {
 	@Test
 	fun testBasic() {
-		val url = SqliteServiceTest::class.java.classLoader.getResource("game.save")
+		val url = SqliteServiceTest::class.java.classLoader.getResource("game.sav")
 		val file = File(url!!.toURI())
 		val saveData = sqliteService.read(file)
 		println(saveData)
