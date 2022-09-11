@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.upload
 
 import com.github.attacktive.troubleshootereditor.model.SaveData
 import com.github.attacktive.troubleshootereditor.sqlite.SqliteService
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
@@ -17,5 +18,10 @@ class UploadController(private val uploadService: UploadService, private val sql
 		uploadService.deleteFile(savedFileName)
 
 		return saveData
+	}
+
+	@PostMapping(value = ["/save"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+	fun save(saveData: SaveData) {
+		LoggerFactory.getLogger(UploadController::class.java).info(saveData.toString())
 	}
 }
