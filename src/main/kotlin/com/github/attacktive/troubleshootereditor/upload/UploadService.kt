@@ -31,12 +31,17 @@ class UploadService(private val propertiesConfiguration: PropertiesConfiguration
 		return fileName
 	}
 
-	fun deleteFile(fileName: String) {
+	fun deleteFile(fileName: String): Boolean {
 		val directory = File(propertiesConfiguration.file.pathToUpload)
 		val file = File(directory, fileName)
 
-		if (!file.delete()) {
+		val deleted = file.delete()
+		if (deleted) {
+			logger.info("Uploaded file $fileName is just deleted.")
+		} else {
 			logger.warn("Failed to delete file \"${file.absolutePath}\".")
 		}
+
+		return deleted
 	}
 }
