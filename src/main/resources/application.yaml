@@ -6,7 +6,7 @@ spring:
 
 app:
   cors:
-    origins: ["http://localhost:3000"]
+    origins: ["http://localhost:5173"]
   file:
     path-to-upload: "./uploaded"
 
