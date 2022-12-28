@@ -3,8 +3,13 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
 app:
   cors:
     origins: ["http://localhost:3000"]
   file:
     path-to-upload: "./uploaded"
+
+logging:
+  file:
+    name: '${user.home}/logs/troubleshooter-editor.log'
