@@ -11,7 +11,7 @@ class SqliteServiceTest(@Autowired private val sqliteService: SqliteService) {
 	fun testBasic() {
 		val url = SqliteServiceTest::class.java.classLoader.getResource("game.sav")
 		val file = File(url!!.toURI())
-		val saveData = sqliteService.read(file)
+		val saveData = sqliteService.readSaveData(file)
 		println(saveData)
 	}
 }

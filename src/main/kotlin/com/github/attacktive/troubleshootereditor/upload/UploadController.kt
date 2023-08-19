@@ -13,7 +13,7 @@ class UploadController(private val uploadService: UploadService, private val sql
 	@PostMapping(value = ["/upload"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun upload(@RequestPart("file") multipartFile: MultipartFile): SaveData {
 		val savedFileName = uploadService.saveFile(multipartFile)
-		val saveData = sqliteService.read(savedFileName)
+		val saveData = sqliteService.readSaveData(savedFileName)
 		uploadService.deleteFile(savedFileName)
 
 		return saveData
