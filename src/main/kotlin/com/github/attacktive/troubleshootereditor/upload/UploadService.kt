@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class UploadService(private val propertiesConfiguration: PropertiesConfiguration) {
-	private val logger = LoggerFactory.getLogger(UploadService::class.java)
+	companion object {
+		private val logger = LoggerFactory.getLogger(UploadService::class.java)
+	}
 
 	fun saveFile(multipartFile: MultipartFile): String {
 		val directory = File(propertiesConfiguration.file.pathToUpload)
@@ -23,8 +25,7 @@ class UploadService(private val propertiesConfiguration: PropertiesConfiguration
 
 		logger.info("Uploaded file ${multipartFile.originalFilename} is temporarily saved as \"${file.absolutePath}\".")
 
-		val fileOutputStream = FileOutputStream(file)
-		fileOutputStream.use {
+		FileOutputStream(file).use {
 			it.write(multipartFile.bytes)
 		}
 

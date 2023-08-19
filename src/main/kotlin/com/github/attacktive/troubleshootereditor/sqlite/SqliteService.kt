@@ -15,16 +15,27 @@ import org.springframework.stereotype.Service
 
 @Service
 class SqliteService(private val propertiesConfiguration: PropertiesConfiguration) {
-	private val logger = LoggerFactory.getLogger(SqliteService::class.java)
+	companion object {
+		private val logger = LoggerFactory.getLogger(SqliteService::class.java)
+	}
 
-	fun read(fileName: String): SaveData {
+	fun read(fileName: String): Connection {
 		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
 		return read(file)
 	}
 
-	fun read(file: File): SaveData {
+	fun read(file: File): Connection {
 		val url = "jdbc:sqlite:${file.absolutePath}"
-		DriverManager.getConnection(url).use {
+		return DriverManager.getConnection(url)
+	}
+
+	fun readSaveData(fileName: String): SaveData {
+		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
+		return readSaveData(file)
+	}
+
+	fun readSaveData(file: File): SaveData {
+		read(file).use {
 			val company = selectCompany(it)
 			val quests = selectQuests(it)
 			val rosters = selectRosters(it)
@@ -34,7 +45,11 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		}
 	}
 
-	private fun selectCompany(connection: Connection): Company {
+	fun save(sourceSaveData: SaveData, saveData: SaveData) {
+		// TODO: diff and upsert
+	}
+
+	fun selectCompany(connection: Connection): Company {
 		val statement = connection.prepareStatement(
 			"""
 				select
@@ -69,7 +84,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		return company!!
 	}
 
-	private fun selectQuests(connection: Connection): List<Quest> {
+	fun selectQuests(connection: Connection): List<Quest> {
 		val statement = connection.prepareStatement(
 			"""
 				select
@@ -107,7 +122,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		return quests.toList()
 	}
 
-	private fun selectRosters(connection: Connection): List<Roster> {
+	fun selectRosters(connection: Connection): List<Roster> {
 		val statement = connection.prepareStatement(
 			"""
 				select
@@ -148,7 +163,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		return rosters.toList()
 	}
 
-	private fun selectItems(connection: Connection): List<Item> {
+	fun selectItems(connection: Connection): List<Item> {
 		val statement = connection.prepareStatement(
 			"""
 				select
@@ -180,5 +195,23 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		}
 
 		return items.toList()
+	}
+
+	fun getProperties(connection: Connection, tableName: String, indexColumnName: String = "masterIndex", nameColumnName: String = "masterName"): MutableMap<String, Long> {
+		val properties = mutableMapOf<String, Long>()
+
+		@Suppress("SqlSourceToSinkFlow")
+		val preparedStatement = connection.prepareStatement("select $indexColumnName, $nameColumnName from $tableName")
+
+		preparedStatement.executeQuery().use {
+			while (it.next()) {
+				val propertyId = it.getLong("masterIndex")
+				val propertyName = it.getString("masterName")
+
+				properties[propertyName] = propertyId
+			}
+		}
+
+		return properties
 	}
 }
