@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.upload
 
-import com.github.attacktive.troubleshootereditor.model.SaveData
+import com.github.attacktive.troubleshootereditor.module.SaveData
 import com.github.attacktive.troubleshootereditor.sqlite.SqliteService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
