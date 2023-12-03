@@ -1,11 +1,6 @@
-package com.github.attacktive.troubleshootereditor.diff
-
-import com.github.attacktive.troubleshootereditor.model.PropertiesDiffResult
-import org.slf4j.LoggerFactory
+package com.github.attacktive.troubleshootereditor.common.diff
 
 object MapDiffUtils {
-	private val logger = LoggerFactory.getLogger(MapDiffUtils::class.java)
-
 	fun diff(source: Map<String, String>, desired: Map<String, String>): PropertiesDiffResult {
 		val inserts = mutableListOf<Pair<String, String>>()
 		val updates = mutableListOf<Pair<String, String>>()

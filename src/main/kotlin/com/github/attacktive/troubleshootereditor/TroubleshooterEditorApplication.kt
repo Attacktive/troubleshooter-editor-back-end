@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor
 
-import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
+import com.github.attacktive.troubleshootereditor.common.configuration.PropertiesConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication

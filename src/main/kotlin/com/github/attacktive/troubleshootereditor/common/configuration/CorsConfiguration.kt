@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.configuration
+package com.github.attacktive.troubleshootereditor.common.configuration
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry

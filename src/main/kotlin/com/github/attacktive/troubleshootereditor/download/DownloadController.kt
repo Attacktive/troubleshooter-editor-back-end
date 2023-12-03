@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.download
 
-import com.github.attacktive.troubleshootereditor.model.SaveData
+import com.github.attacktive.troubleshootereditor.module.SaveData
 import com.github.attacktive.troubleshootereditor.upload.UploadService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders

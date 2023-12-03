@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.configuration
+package com.github.attacktive.troubleshootereditor.common.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
