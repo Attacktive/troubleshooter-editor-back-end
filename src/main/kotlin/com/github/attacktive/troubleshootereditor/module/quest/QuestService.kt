@@ -45,7 +45,7 @@ object QuestService {
 
 	fun getStatements(diffResult: Quest.DiffResult, connection: Connection): MutableList<PreparedStatement> {
 		if (!diffResult.hasChanges) {
-			throw RuntimeException("No statements when no changes.")
+			throw IllegalStateException("No statements when no changes.")
 		}
 
 		var toUpdateQuest = false
