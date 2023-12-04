@@ -1,5 +1,8 @@
 package com.github.attacktive.troubleshootereditor.sqlite
 
+import java.io.File
+import java.sql.Connection
+import java.sql.DriverManager
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import com.github.attacktive.troubleshootereditor.extension.findById
 import com.github.attacktive.troubleshootereditor.model.Company
@@ -9,9 +12,6 @@ import com.github.attacktive.troubleshootereditor.model.Roster
 import com.github.attacktive.troubleshootereditor.model.SaveData
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.io.File
-import java.sql.Connection
-import java.sql.DriverManager
 
 @Service
 class SqliteService(private val propertiesConfiguration: PropertiesConfiguration) {
