@@ -1,9 +1,9 @@
 package com.github.attacktive.troubleshootereditor.sqlite
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import kotlin.test.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class SqliteServiceTest(@Autowired private val sqliteService: SqliteService) {
