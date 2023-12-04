@@ -6,11 +6,11 @@ import com.github.attacktive.troubleshootereditor.common.diff.DiffResult
 import com.github.attacktive.troubleshootereditor.module.Identifiable
 
 object PropertiesService {
-	fun <T, TID> getPropertiesStatements(connection: Connection, diffResult: T, tableName: String, idColumnName: String, indexColumnName: String = "masterIndex", valueColumnName: String = "propValue"): MutableList<PreparedStatement> where T: DiffResult, T: Identifiable<TID> {
+	fun <T, TID> getPropertiesStatements(connection: Connection, diffResult: T, masterTableDetails: MasterTableDetails): MutableList<PreparedStatement> where T: DiffResult, T: Identifiable<TID> {
 		val propertyStatements = mutableListOf<PreparedStatement>()
 
 		if (diffResult.properties != null) {
-			val properties = MasterService.getProperties(connection, tableName)
+			val properties = MasterService.getProperties(connection, masterTableDetails.tableName)
 
 			val propertiesDiff = diffResult.properties!!
 			propertyStatements.addAll(
@@ -19,7 +19,7 @@ object PropertiesService {
 
 					val statement = connection.prepareStatement(
 						"""
-						insert into $tableName($idColumnName, $indexColumnName, $valueColumnName)
+						insert into ${masterTableDetails.tableName}(${masterTableDetails.idColumnName}, ${masterTableDetails.indexColumnName}, ${masterTableDetails.valueColumnName})
 						values (${diffResult.getId()}, ?, ?)
 						""".trimIndent()
 					)
@@ -37,9 +37,9 @@ object PropertiesService {
 
 					val statement = connection.prepareStatement(
 						"""
-						update $tableName
-						set $valueColumnName = ?
-						where $idColumnName = ${diffResult.getId()} and $indexColumnName = ?
+						update ${masterTableDetails.tableName}
+						set ${masterTableDetails.valueColumnName} = ?
+						where ${masterTableDetails.idColumnName} = ${diffResult.getId()} and ${masterTableDetails.indexColumnName} = ?
 						""".trimIndent()
 					)
 
@@ -56,8 +56,8 @@ object PropertiesService {
 
 					val statement = connection.prepareStatement(
 						"""
-						delete from $tableName
-						where $idColumnName = ${diffResult.getId()} and $indexColumnName = ?
+						delete from ${masterTableDetails.tableName}
+						where ${masterTableDetails.idColumnName} = ${diffResult.getId()} and ${masterTableDetails.indexColumnName} = ?
 						""".trimIndent()
 					)
 
