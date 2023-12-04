@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.module.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import com.github.attacktive.troubleshootereditor.module.common.MasterTableDetails
 import com.github.attacktive.troubleshootereditor.module.common.PropertiesService
 
 object CompanyService {
@@ -73,7 +74,7 @@ object CompanyService {
 			setClauseBuilder.forEachIndexed { index, pair -> companyStatement.setObject((index + 1), pair.second) }
 		}
 
-		val statements = PropertiesService.getPropertiesStatements(connection, diffResult, "companyID", "masterIndex", "cpValue")
+		val statements = PropertiesService.getPropertiesStatements(connection, diffResult, MasterTableDetails("companyID", "masterIndex", "cpValue"))
 
 		if (companyStatement != null) {
 			statements.add(companyStatement)
