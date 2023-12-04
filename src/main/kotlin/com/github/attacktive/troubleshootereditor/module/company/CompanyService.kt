@@ -42,7 +42,7 @@ object CompanyService {
 
 	fun getStatements(diffResult: Company.DiffResult, connection: Connection): MutableList<PreparedStatement> {
 		if (!diffResult.hasChanges) {
-			throw RuntimeException("No statements when no changes.")
+			throw IllegalStateException("No statements when no changes.")
 		}
 
 		var toUpdateCompany = false

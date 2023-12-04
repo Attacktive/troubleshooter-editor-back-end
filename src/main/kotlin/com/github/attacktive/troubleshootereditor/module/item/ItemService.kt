@@ -41,7 +41,7 @@ object ItemService {
 
 	fun getStatements(diffResult: Item.DiffResult, connection: Connection): MutableList<PreparedStatement> {
 		if (!diffResult.hasChanges) {
-			throw RuntimeException("No statements when no changes.")
+			throw IllegalStateException("No statements when no changes.")
 		}
 
 		var toUpdateItems = false
