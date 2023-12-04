@@ -1,12 +1,12 @@
 package com.github.attacktive.troubleshootereditor.upload
 
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
-import java.io.FileOutputStream
-import java.util.UUID
 
 @Service
 class UploadService(private val propertiesConfiguration: PropertiesConfiguration) {
