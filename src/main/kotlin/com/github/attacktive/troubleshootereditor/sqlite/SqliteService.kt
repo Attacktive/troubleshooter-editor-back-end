@@ -34,6 +34,20 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 		}
 	}
 
+	fun applyQuickCheats(fileName: String): String {
+		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
+		val url = "jdbc:sqlite:${file.absolutePath}"
+		DriverManager.getConnection(url).use { connection ->
+			val equippedItemsByPosition = selectEquippedItems(connection)
+				.filterNot { it.equipmentPosition == null }
+				.groupBy { it.equipmentPosition }
+
+			overwriteProperties(connection, equippedItemsByPosition)
+		}
+
+		return file.absolutePath
+	}
+
 	private fun selectCompany(connection: Connection): Company {
 		val statement = connection.prepareStatement(
 			"""
@@ -85,7 +99,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			""".trimIndent()
 		)
 
-		val quests = mutableSetOf<Quest>()
+		val quests = mutableListOf<Quest>()
 		statement.executeQuery().use {
 			while (it.next()) {
 				val index = it.getLong("questIndex")
@@ -104,7 +118,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			}
 		}
 
-		return quests.toList()
+		return quests
 	}
 
 	private fun selectRosters(connection: Connection): List<Roster> {
@@ -124,7 +138,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			""".trimIndent()
 		)
 
-		val rosters = mutableSetOf<Roster>()
+		val rosters = mutableListOf<Roster>()
 		statement.executeQuery().use {
 			while (it.next()) {
 				val id = it.getLong("rosterID")
@@ -145,7 +159,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			}
 		}
 
-		return rosters.toList()
+		return rosters
 	}
 
 	private fun selectItems(connection: Connection): List<Item> {
@@ -165,20 +179,59 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 			""".trimIndent()
 		)
 
-		val items = mutableSetOf<Item>()
+		val items = mutableListOf<Item>()
 		statement.executeQuery().use {
 			while (it.next()) {
-				val id = it.getLong("itemID")
-				val type = it.getString("itemType")
-				val count = it.getLong("itemCount")
-				val status = it.getString("masterName")
-				val properties = it.getString("properties")
-
-				val item = Item(id, type, count, status, properties)
+				val item = Item.fromResultSet(it)
 				items.add(item)
 			}
 		}
 
-		return items.toList()
+		return items
+	}
+
+	private fun selectEquippedItems(connection: Connection): List<Item> {
+		val statement = connection.prepareStatement(
+			"""
+				select
+					i.itemID,
+					i.itemType,
+					i.itemCount,
+					ism.masterName,
+					iif(ipm.masterIndex is null, '{}', json_group_object(ipm.masterName, ip.propValue)) as properties,
+					ie.positionKey
+				from item i
+					join itemEquippedInfo ie on i.itemID = ie.itemID
+					left join itemStatusMaster ism on i.itemStatus = ism.masterIndex
+					left join itemProperty ip on i.itemID = ip.itemID
+					left join itemPropertyMaster ipm on ip.masterIndex = ipm.masterIndex
+				group by i.itemID, i.itemType, i.itemCount, ism.masterName
+			""".trimIndent()
+		)
+
+		val items = mutableListOf<Item>()
+		statement.executeQuery().use {
+			while (it.next()) {
+				val item = Item.fromResultSet(it)
+				items.add(item)
+			}
+		}
+
+		return items
+	}
+
+	private fun overwriteProperties(connection: Connection, itemsPerPosition: Map<Item.EquipmentPosition?, List<Item>>) {
+		itemsPerPosition.map {
+			val position = it.key!!
+			val items = it.value
+
+			val cheatingFunction = position.cheatingStatements(connection)
+
+			items.map { item -> cheatingFunction(item.id) }
+				.flatten()
+		}
+		.flatten()
+		.onEach { statement -> logger.debug(statement.toString()) }
+		.forEach { statement -> statement.executeUpdate() }
 	}
 }

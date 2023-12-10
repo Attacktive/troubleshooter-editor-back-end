@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.upload
+package com.github.attacktive.troubleshootereditor.file
 
 import java.io.File
 import java.io.FileOutputStream
