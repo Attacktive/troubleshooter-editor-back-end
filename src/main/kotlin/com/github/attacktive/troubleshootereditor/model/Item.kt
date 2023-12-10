@@ -13,7 +13,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		properties = deserialize(json)
 	}
 
-	var properties = mapOf<String, String>()
+	private var properties = mapOf<String, String>()
 
 	companion object {
 		private val logger = LoggerFactory.getLogger(Item::class.java)
@@ -52,11 +52,11 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		fun cheatingStatements(connection: Connection): (Long) -> List<PreparedStatement> {
 			return fun(id: Long): List<PreparedStatement> {
 				val stringStatements: List<String> = when (this) {
-					WEAPON -> listOf(*defaults(id), *options(id, ItemOption.forWeapons))
-					BODY -> listOf(*defaults(id), *options(id, ItemOption.forBodies))
-					HAND -> listOf(*defaults(id), *options(id, ItemOption.forHands))
-					LEG -> listOf(*defaults(id), *options(id, ItemOption.forLegs))
-					COSTUME -> listOf(*defaults(id), *options(id, ItemOption.forCostumes))
+					WEAPON -> defaults(id) + options(id, ItemOption.forWeapons)
+					BODY -> defaults(id) + options(id, ItemOption.forBodies)
+					HAND -> defaults(id) + options(id, ItemOption.forHands)
+					LEG -> defaults(id) + options(id, ItemOption.forLegs)
+					COSTUME -> defaults(id) + options(id, ItemOption.forCostumes)
 					else -> emptyList()
 				}
 
@@ -105,7 +105,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 				values ($id, ${PropertyMaster.LEVEL.index}, '$level')
 			""".trimIndent()
 
-			private fun defaults(id: Long) = arrayOf(
+			private fun defaults(id: Long) = listOf(
 				clearExisting(id),
 				secondHand(id),
 				extreme(id),
@@ -115,7 +115,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 				level(id)
 			)
 
-			private fun options(id: Long, options: List<Pair<ItemOption, Int>>): Array<String> {
+			private fun options(id: Long, options: List<Pair<ItemOption, Int>>): List<String> {
 				if (options.size > 5) {
 					logger.warn("You can have up to 5 options! Other than the first five are going to be silently ignored.")
 				}
@@ -135,7 +135,6 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 					)
 				}
 				.flatten()
-				.toTypedArray()
 			}
 		}
 	}
