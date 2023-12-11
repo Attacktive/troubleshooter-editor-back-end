@@ -3,17 +3,19 @@ package com.github.attacktive.troubleshootereditor.file
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
-import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class UploadService(private val propertiesConfiguration: PropertiesConfiguration) {
-	private val logger = LoggerFactory.getLogger(UploadService::class.java)
+class UploadService {
+	companion object {
+		private val logger = LoggerFactory.getLogger(UploadService::class.java)
+		private val tmpdir = System.getProperty("java.io.tmpdir")
+	}
 
 	fun saveFile(multipartFile: MultipartFile): String {
-		val directory = File(propertiesConfiguration.file.pathToUpload)
+		val directory = File(tmpdir)
 		if (!directory.exists()) {
 			directory.mkdirs()
 		}
@@ -32,7 +34,7 @@ class UploadService(private val propertiesConfiguration: PropertiesConfiguration
 	}
 
 	fun deleteFile(fileName: String): Boolean {
-		val directory = File(propertiesConfiguration.file.pathToUpload)
+		val directory = File(tmpdir)
 		val file = File(directory, fileName)
 
 		val deleted = file.delete()

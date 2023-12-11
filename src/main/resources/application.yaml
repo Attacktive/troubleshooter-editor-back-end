@@ -7,8 +7,6 @@ spring:
 app:
   cors:
     origins: ["*"]
-  file:
-    path-to-upload: "./uploaded"
 
 logging:
   file:

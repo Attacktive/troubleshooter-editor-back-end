@@ -7,16 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 @ConfigurationPropertiesScan
 class PropertiesConfiguration {
 	val cors: Cors = Cors()
-	val file: File = File()
 
 	class Cors {
 		val origins: List<String> = mutableListOf()
-	}
-
-	class File {
-		var pathToUpload = ""
-			set(value) {
-				field = value
-			}
 	}
 }

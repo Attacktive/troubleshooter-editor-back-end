@@ -3,7 +3,6 @@ package com.github.attacktive.troubleshootereditor.sqlite
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
-import com.github.attacktive.troubleshootereditor.configuration.PropertiesConfiguration
 import com.github.attacktive.troubleshootereditor.extension.findById
 import com.github.attacktive.troubleshootereditor.model.Company
 import com.github.attacktive.troubleshootereditor.model.Item
@@ -14,11 +13,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class SqliteService(private val propertiesConfiguration: PropertiesConfiguration) {
-	private val logger = LoggerFactory.getLogger(SqliteService::class.java)
+class SqliteService {
+	companion object {
+		private val logger = LoggerFactory.getLogger(SqliteService::class.java)
+		private val tmpdir = System.getProperty("java.io.tmpdir")
+	}
 
 	fun read(fileName: String): SaveData {
-		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
+		val file = File(tmpdir, fileName)
 		return read(file)
 	}
 
@@ -35,7 +37,7 @@ class SqliteService(private val propertiesConfiguration: PropertiesConfiguration
 	}
 
 	fun applyQuickCheats(fileName: String): String {
-		val file = File(propertiesConfiguration.file.pathToUpload, fileName)
+		val file = File(tmpdir, fileName)
 		val url = "jdbc:sqlite:${file.absolutePath}"
 		DriverManager.getConnection(url).use { connection ->
 			val equippedItemsByPosition = selectEquippedItems(connection)
