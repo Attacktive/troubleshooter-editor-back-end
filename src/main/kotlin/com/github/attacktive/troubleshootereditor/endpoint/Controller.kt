@@ -17,6 +17,7 @@ class Controller(private val uploadService: UploadService, private val sqliteSer
 	fun upload(@RequestPart("file") multipartFile: MultipartFile): SaveData {
 		val savedFileName = uploadService.saveFile(multipartFile)
 		val saveData = sqliteService.read(savedFileName)
+
 		uploadService.deleteFile(savedFileName)
 
 		return saveData
@@ -25,8 +26,10 @@ class Controller(private val uploadService: UploadService, private val sqliteSer
 	@PostMapping(value = ["/quick-cheats"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun quickCheats(@RequestPart("file") multipartFile: MultipartFile): ResponseEntity<ByteArray> {
 		val savedFileName = uploadService.saveFile(multipartFile)
-		val fileAbsolutePath = sqliteService.applyQuickCheats(savedFileName)
-		val fileInBytes = File(fileAbsolutePath).readBytes()
+		val cheatedFileAbsolutePath = sqliteService.applyQuickCheats(savedFileName)
+		val fileInBytes = File(cheatedFileAbsolutePath).readBytes()
+
+		uploadService.deleteFile(savedFileName)
 
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_OCTET_STREAM)
