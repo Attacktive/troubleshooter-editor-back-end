@@ -13,7 +13,11 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		properties = deserialize(json)
 	}
 
-	private var properties = mapOf<String, String>()
+	/**
+	 * The property needs to be serialized so don't make it `private`.
+	 */
+	@Suppress("MemberVisibilityCanBePrivate")
+	var properties = mapOf<String, String>()
 
 	companion object {
 		private val logger = LoggerFactory.getLogger(Item::class.java)
