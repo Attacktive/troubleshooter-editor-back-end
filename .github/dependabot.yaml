@@ -16,4 +16,4 @@ updates:
     labels:
       - "CI/CD"
     commit-message:
-      prefix: ci
+      prefix: 'ci'
