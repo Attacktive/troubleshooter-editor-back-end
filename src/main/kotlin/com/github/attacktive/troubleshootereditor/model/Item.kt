@@ -60,6 +60,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 					BODY -> defaults(id) + options(id, ItemOption.forBodies)
 					HAND -> defaults(id) + options(id, ItemOption.forHands)
 					LEG -> defaults(id) + options(id, ItemOption.forLegs)
+					INVENTORY2 -> defaults(id) + options(id, ItemOption.forInventory2)
 					COSTUME -> defaults(id) + options(id, ItemOption.forCostumes)
 					else -> emptyList()
 				}
@@ -230,6 +231,14 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 				MAX_VIGOR to 100,
 				FIRE_RESISTANCE to 10_000,
 				ICE_RESISTANCE to 10_000
+			)
+
+			val forInventory2 = listOf(
+				ATTACK_POWER to 1_000,
+				ESP_POWER to 1_000,
+				CRITICAL_STRIKE_CHANCE to 50,
+				CRITICAL_STRIKE_DEAL to 50,
+				ACCURACY to 50
 			)
 
 			val forCostumes = listOf(
