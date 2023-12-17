@@ -36,6 +36,20 @@ class SqliteService {
 		}
 	}
 
+	fun save(fileName: String, edited: SaveData): String {
+		val file = File(tmpdir, fileName)
+		val url = "jdbc:sqlite:${file.absolutePath}"
+		DriverManager.getConnection(url).use { connection ->
+			val oldCompany = selectCompany(connection)
+			val newCompany = edited.company
+
+			val diffResult = oldCompany.diff(newCompany)
+			diffResult.generateStatements(connection).forEach { it.executeUpdate() }
+		}
+
+		return file.absolutePath
+	}
+
 	fun applyQuickCheats(fileName: String): String {
 		val file = File(tmpdir, fileName)
 		val url = "jdbc:sqlite:${file.absolutePath}"
@@ -56,33 +70,48 @@ class SqliteService {
 				select
 					c.companyID,
 					c.CompanyName,
-					c.Vill,
-					cpm.masterName,
-					cp.cpValue
+					c.Vill
 				from company c
-					left join companyProperty cp on c.companyID = cp.companyID
-					left join companyPropertyMaster cpm on cp.masterIndex = cpm.masterIndex
+				limit 1
 			""".trimIndent()
 		)
 
-		var company: Company? = null
+		val company: Company
 		statement.executeQuery().use {
-			while (it.next()) {
-				val companyId = it.getLong("companyID")
+			if (it.next()) {
+				val companyId = it.getInt("companyID")
 				val companyName = it.getString("CompanyName")
 				val vill = it.getLong("Vill")
 
-				if (company == null) {
-					company = Company(companyId, companyName, vill)
-
-					val key = it.getString("masterName")
-					val value = it.getString("cpValue")
-					company!!.properties[key] = value
-				}
+				company = Company(companyId, companyName, vill)
+			} else {
+				throw IllegalStateException("The save file doesn't seem to have a company data at all!")
 			}
 		}
 
-		return company!!
+		val propertiesStatement = connection.prepareStatement("""
+			select
+				cpm.masterName,
+				cp.cpValue
+			from company c
+				left join companyProperty cp on c.companyID = cp.companyID
+				left join companyPropertyMaster cpm on cp.masterIndex = cpm.masterIndex
+			where c.companyID = ?
+		""".trimIndent()
+		)
+
+		propertiesStatement.setInt(1, company.id)
+
+		propertiesStatement.executeQuery().use {
+			while (it.next()) {
+				val key = it.getString("masterName")
+				val value = it.getString("cpValue")
+
+				company.properties.add(key to value)
+			}
+		}
+
+		return company
 	}
 
 	private fun selectQuests(connection: Connection): List<Quest> {
