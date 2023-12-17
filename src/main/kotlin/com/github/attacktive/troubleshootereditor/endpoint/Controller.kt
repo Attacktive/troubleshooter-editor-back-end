@@ -23,6 +23,19 @@ class Controller(private val uploadService: UploadService, private val sqliteSer
 		return saveData
 	}
 
+	@PostMapping(value = ["/save"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+	fun save(@RequestPart("file") multipartFile: MultipartFile, @RequestPart("edited") edited: SaveData): ResponseEntity<ByteArray> {
+		val savedFileName = uploadService.saveFile(multipartFile)
+		val editedFileAbsolutePath = sqliteService.save(savedFileName, edited)
+		val fileInBytes = File(editedFileAbsolutePath).readBytes()
+
+		uploadService.deleteFile(savedFileName)
+
+		return ResponseEntity.ok()
+			.contentType(MediaType.APPLICATION_OCTET_STREAM)
+			.body(fileInBytes)
+	}
+
 	@PostMapping(value = ["/quick-cheats"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun quickCheats(@RequestPart("file") multipartFile: MultipartFile): ResponseEntity<ByteArray> {
 		val savedFileName = uploadService.saveFile(multipartFile)
