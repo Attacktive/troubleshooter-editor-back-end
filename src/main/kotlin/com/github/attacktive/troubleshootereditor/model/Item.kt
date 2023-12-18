@@ -188,6 +188,8 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		SPEED("Speed"),
 		MAX_HP("MaxHP"),
 		MAX_VIGOR("MaxVigor"),
+		MAX_SP("MaxAddSP"),
+		VIGOR_REGENERATION("RegenVigor"),
 		MOVE_DISTANCE("MoveDist"),
 		SIGHT_RANGE("SightRange"),
 		SLASHING_RESISTANCE("SlashingResistance"),
@@ -236,9 +238,9 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 			val forInventory2 = listOf(
 				ATTACK_POWER to 1_000,
 				ESP_POWER to 1_000,
-				CRITICAL_STRIKE_CHANCE to 50,
-				CRITICAL_STRIKE_DEAL to 50,
-				ACCURACY to 50
+				ACCURACY to 50,
+				VIGOR_REGENERATION to 10,
+				MAX_SP to 10
 			)
 
 			val forCostumes = listOf(
