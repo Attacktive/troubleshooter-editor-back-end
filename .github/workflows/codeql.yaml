@@ -60,8 +60,9 @@ jobs:
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
 
-    - run: |
-        echo "Run, Build Application using script"
+    - name: 'Build'
+      run: |
+        echo "java version: $(java --version)"
         ./gradlew compileKotlin
 
     - name: 'Perform CodeQL Analysis'
