@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.model
+package com.github.attacktive.troubleshootereditor.domain
 
 data class Property(private val pair: Pair<String, String>, val diffType: DiffType = DiffType.NONE) {
 	val key = pair.first

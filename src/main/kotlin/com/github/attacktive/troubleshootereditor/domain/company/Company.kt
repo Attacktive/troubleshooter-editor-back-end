@@ -1,7 +1,9 @@
-package com.github.attacktive.troubleshootereditor.model
+package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import com.github.attacktive.troubleshootereditor.domain.DiffType
+import com.github.attacktive.troubleshootereditor.domain.Properties
 
 data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties = Properties()) {
 	fun diff(that: Company): DiffResult {
