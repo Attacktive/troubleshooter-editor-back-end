@@ -3,16 +3,17 @@ package com.github.attacktive.troubleshootereditor.file
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
-import org.slf4j.LoggerFactory
+import com.github.attacktive.troubleshootereditor.extension.logger
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
 class UploadService {
 	companion object {
-		private val logger = LoggerFactory.getLogger(UploadService::class.java)
 		private val tmpdir = System.getProperty("java.io.tmpdir")
 	}
+
+	val logger by logger()
 
 	fun saveFile(multipartFile: MultipartFile): String {
 		val directory = File(tmpdir)
