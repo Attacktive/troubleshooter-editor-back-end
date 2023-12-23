@@ -53,9 +53,9 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 									select
 										$id,
 										cpm.masterIndex,
-										${property.value}
+										'${property.value}'
 									from companyPropertyMaster cpm
-									where masterName = ${property.value}
+									where masterName = '${property.value}'
 								""".trimIndent()
 							)
 						}
@@ -66,7 +66,7 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 									where masterIndex = (
 										select masterIndex
 										from companyPropertyMaster
-										where companyID = $id and masterName = ${property.key}
+										where companyID = $id and masterName = '${property.key}'
 									)
 								""".trimIndent()
 							)
@@ -75,11 +75,11 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 							connection.prepareStatement(
 								"""
 									update companyProperty
-									set cpValue = ${property.value}
+									set cpValue = '${property.value}'
 									where companyID = $id and masterIndex = (
 										select masterIndex
 										from companyPropertyMaster
-										where masterName = $property.key
+										where masterName = '$property.key'
 									)
 								""".trimIndent()
 							)
