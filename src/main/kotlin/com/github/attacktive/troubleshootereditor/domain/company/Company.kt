@@ -55,7 +55,7 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 										cpm.masterIndex,
 										'${property.value}'
 									from companyPropertyMaster cpm
-									where masterName = '${property.value}'
+									where masterName = '${property.key}'
 								""".trimIndent()
 							)
 						}
