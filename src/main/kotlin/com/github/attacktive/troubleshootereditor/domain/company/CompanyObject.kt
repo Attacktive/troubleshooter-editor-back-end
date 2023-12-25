@@ -46,7 +46,7 @@ object CompanyObject {
 				val key = it.getString("masterName")
 				val value = it.getString("cpValue")
 
-				company.properties.add(key to value)
+				company._properties.add(key to value)
 			}
 		}
 

@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.github.attacktive.troubleshootereditor.domain.DiffType
 import com.github.attacktive.troubleshootereditor.domain.Properties
 
-data class Company(val id: Int, val name: String, val vill: Long, @JsonIgnore val properties: Properties = Properties()) {
+data class Company(val id: Int, val name: String, val vill: Long, @JsonIgnore val _properties: Properties = Properties()) {
 	@Suppress("unused")
-	val propertyMap get() = properties.toMap()
+	val properties get() = _properties.toMap()
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val vill = that.vill.takeUnless { vill == that.vill }
-		val properties = properties.diff(that.properties)
+		val properties = _properties.diff(that._properties)
 
 		return DiffResult(id, name, vill, properties)
 	}
