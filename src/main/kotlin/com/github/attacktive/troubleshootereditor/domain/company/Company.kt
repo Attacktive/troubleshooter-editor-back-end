@@ -23,75 +23,61 @@ data class Company(val id: Int, val name: String, val vill: Long, @JsonIgnore va
 			val statements: List<PreparedStatement> = mutableListOf()
 
 			if (name != null) {
-				val statement = connection.prepareStatement("""
-					update main.company
-					set CompanyName = ?
-					where companyID = ?
+				statements.addLast(connection.prepareStatement("""
+					update company
+					set CompanyName = '$name'
+					where companyID = $id
 				""".trimIndent())
-				statement.setString(1, name)
-				statement.setInt(2, id)
-
-				statements.addLast(statement)
+				)
 			}
 
 			if (vill != null) {
-				val statement = connection.prepareStatement("""
-					update main.company
-					set Vill = ?
-					where companyID = ?
+				statements.addLast(connection.prepareStatement("""
+					update company
+					set Vill = $vill
+					where companyID = $id
 				""".trimIndent())
-				statement.setLong(1, vill)
-				statement.setInt(2, id)
-
-				statements.addLast(statement)
+				)
 			}
 
-			if (properties.isNotEmpty()) {
-				properties.asSequence().map { property ->
-					when (property.diffType) {
-						DiffType.NONE -> null
-						DiffType.ADDED -> {
-							connection.prepareStatement(
-								"""
-									insert into companyProperty (companyId, masterIndex, cpValue)
-									select
-										$id,
-										cpm.masterIndex,
-										'${property.value}'
-									from companyPropertyMaster cpm
-									where masterName = '${property.key}'
-								""".trimIndent()
+			properties.asSequence().map { property ->
+				when (property.diffType) {
+					DiffType.NONE -> null
+					DiffType.ADDED -> {
+						connection.prepareStatement("""
+							insert into companyProperty (companyId, masterIndex, cpValue)
+							select
+								$id,
+								cpm.masterIndex,
+								'${property.value}'
+							from companyPropertyMaster cpm
+							where masterName = '${property.key}'
+						""".trimIndent())
+					}
+					DiffType.REMOVED -> {
+						connection.prepareStatement("""
+							delete from companyProperty
+							where masterIndex = (
+								select masterIndex
+								from companyPropertyMaster
+								where companyID = $id and masterName = '${property.key}'
 							)
-						}
-						DiffType.REMOVED -> {
-							connection.prepareStatement(
-								"""
-									delete from companyProperty
-									where masterIndex = (
-										select masterIndex
-										from companyPropertyMaster
-										where companyID = $id and masterName = '${property.key}'
-									)
-								""".trimIndent()
+						""".trimIndent())
+					}
+					DiffType.MODIFIED -> {
+						connection.prepareStatement("""
+							update companyProperty
+							set cpValue = '${property.value}'
+							where companyID = $id and masterIndex = (
+								select masterIndex
+								from companyPropertyMaster
+								where masterName = '$property.key'
 							)
-						}
-						DiffType.MODIFIED -> {
-							connection.prepareStatement(
-								"""
-									update companyProperty
-									set cpValue = '${property.value}'
-									where companyID = $id and masterIndex = (
-										select masterIndex
-										from companyPropertyMaster
-										where masterName = '$property.key'
-									)
-								""".trimIndent()
-							)
-						}
+						""".trimIndent())
 					}
 				}
-				.forEach { statements.addLast(it) }
 			}
+			.forEach { statements.addLast(it) }
 
 			return statements
 		}

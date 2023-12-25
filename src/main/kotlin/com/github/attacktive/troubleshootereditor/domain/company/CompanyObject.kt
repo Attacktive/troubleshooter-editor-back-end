@@ -35,11 +35,9 @@ object CompanyObject {
 			from company c
 				left join companyProperty cp on c.companyID = cp.companyID
 				left join companyPropertyMaster cpm on cp.masterIndex = cpm.masterIndex
-			where c.companyID = ?
+			where c.companyID = ${company.id}
 		""".trimIndent()
 		)
-
-		propertiesStatement.setInt(1, company.id)
 
 		propertiesStatement.executeQuery().use {
 			while (it.next()) {
