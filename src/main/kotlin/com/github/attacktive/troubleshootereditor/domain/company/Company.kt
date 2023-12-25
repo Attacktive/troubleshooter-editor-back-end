@@ -2,10 +2,14 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.github.attacktive.troubleshootereditor.domain.DiffType
 import com.github.attacktive.troubleshootereditor.domain.Properties
 
-data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties = Properties()) {
+data class Company(val id: Int, val name: String, val vill: Long, @JsonIgnore val properties: Properties = Properties()) {
+	@Suppress("unused")
+	val propertyMap get() = properties.toMap()
+
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val vill = that.vill.takeUnless { vill == that.vill }
@@ -43,7 +47,7 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 			}
 
 			if (properties.isNotEmpty()) {
-				properties.map { property ->
+				properties.asSequence().map { property ->
 					when (property.diffType) {
 						DiffType.NONE -> null
 						DiffType.ADDED -> {
