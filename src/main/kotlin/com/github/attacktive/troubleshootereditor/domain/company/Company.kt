@@ -23,63 +23,70 @@ data class Company(val id: Int, val name: String, val vill: Long, @JsonIgnore va
 			val statements: List<PreparedStatement> = mutableListOf()
 
 			if (name != null) {
-				statements.addLast(connection.prepareStatement("""
-					update company
-					set CompanyName = '$name'
-					where companyID = $id
-				""".trimIndent())
-				)
+				statements.addLast(updateStatementForName(connection))
 			}
 
 			if (vill != null) {
-				statements.addLast(connection.prepareStatement("""
-					update company
-					set Vill = $vill
-					where companyID = $id
-				""".trimIndent())
-				)
+				statements.addLast(updateStatementForVill(connection))
 			}
 
 			properties.asSequence().map { property ->
 				when (property.diffType) {
 					DiffType.NONE -> null
-					DiffType.ADDED -> {
-						connection.prepareStatement("""
-							insert into companyProperty (companyId, masterIndex, cpValue)
-							select
-								$id,
-								cpm.masterIndex,
-								'${property.value}'
-							from companyPropertyMaster cpm
-							where masterName = '${property.key}'
-						""".trimIndent())
-					}
-					DiffType.REMOVED -> {
-						connection.prepareStatement("""
-							delete from companyProperty
-							where masterIndex = (
-								select masterIndex
-								from companyPropertyMaster
-								where companyID = $id and masterName = '${property.key}'
-							)
-						""".trimIndent())
-					}
-					DiffType.MODIFIED -> {
-						connection.prepareStatement("""
-							update companyProperty
-							set cpValue = '${property.value}'
-							where companyID = $id and masterIndex = (
-								select masterIndex
-								from companyPropertyMaster
-								where masterName = '$property.key'
-							)
-						""".trimIndent())
-					}
+					DiffType.ADDED -> insertStatementForProperty(connection, property.key, property.value)
+					DiffType.MODIFIED -> updateStatementForProperty(connection, property.key, property.value)
+					DiffType.REMOVED -> deleteStatementForProperty(connection, property.key)
 				}
 			}
 			.forEach { statements.addLast(it) }
 
 			return statements
 		}
+
+		private fun updateStatementForName(connection: Connection) = connection.prepareStatement("""
+				update company
+				set CompanyName = '$name'
+				where companyID = $id
+			""".trimIndent()
+		)
+
+		private fun updateStatementForVill(connection: Connection) = connection.prepareStatement("""
+				update company
+				set Vill = $vill
+				where companyID = $id
+			""".trimIndent()
+		)
+
+		private fun insertStatementForProperty(connection: Connection, propertyName: String, propertyValue: String) = connection.prepareStatement("""
+				insert into companyProperty (companyId, masterIndex, cpValue)
+				select
+					$id,
+					cpm.masterIndex,
+					'$propertyValue'
+				from companyPropertyMaster cpm
+				where masterName = '$propertyName'
+			""".trimIndent()
+		)
+
+		private fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String) = connection.prepareStatement("""
+				update companyProperty
+				set cpValue = '$propertyValue'
+				where companyID = $id and masterIndex = (
+					select masterIndex
+					from companyPropertyMaster
+					where masterName = '$propertyName'
+				)
+			""".trimIndent()
+		)
+
+		private fun deleteStatementForProperty(connection: Connection, propertyName: String) = connection.prepareStatement("""
+				delete from companyProperty
+				where masterIndex = (
+					select masterIndex
+					from companyPropertyMaster
+					where companyID = $id and masterName = '$propertyName'
+				)
+			""".trimIndent()
+		)
 	}
 }
