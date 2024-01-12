@@ -7,6 +7,7 @@ import com.github.attacktive.troubleshootereditor.domain.company.CompanyObject
 import com.github.attacktive.troubleshootereditor.domain.item.ItemObject
 import com.github.attacktive.troubleshootereditor.domain.quest.QuestObject
 import com.github.attacktive.troubleshootereditor.domain.roster.RosterObject
+import com.github.attacktive.troubleshootereditor.extension.getJdbcUrl
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,7 +22,7 @@ class SqliteService {
 	}
 
 	fun read(file: File): SaveData {
-		val url = "jdbc:sqlite:${file.absolutePath}"
+		val url = file.getJdbcUrl()
 		DriverManager.getConnection(url).use {
 			val company = CompanyObject.selectCompany(it)
 			val items = ItemObject.selectItems(it)
@@ -34,7 +35,7 @@ class SqliteService {
 
 	fun save(fileName: String, edited: SaveData): String {
 		val file = File(tmpdir, fileName)
-		val url = "jdbc:sqlite:${file.absolutePath}"
+		val url = file.getJdbcUrl()
 		DriverManager.getConnection(url).use { connection ->
 			val oldCompany = CompanyObject.selectCompany(connection)
 			val newCompany = edited.company
@@ -48,7 +49,7 @@ class SqliteService {
 
 	fun applyQuickCheats(fileName: String): String {
 		val file = File(tmpdir, fileName)
-		val url = "jdbc:sqlite:${file.absolutePath}"
+		val url = file.getJdbcUrl()
 		DriverManager.getConnection(url).use { connection ->
 			val equippedItemsByPosition = ItemObject.selectEquippedItems(connection)
 				.filterNot { it.equipmentPosition == null }
