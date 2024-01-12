@@ -2,7 +2,7 @@ package com.github.attacktive.troubleshootereditor.sqlite
 
 import java.io.File
 import java.sql.DriverManager
-import com.github.attacktive.troubleshootereditor.domain.SaveData
+import com.github.attacktive.troubleshootereditor.domain.common.SaveData
 import com.github.attacktive.troubleshootereditor.domain.company.CompanyObject
 import com.github.attacktive.troubleshootereditor.domain.item.ItemObject
 import com.github.attacktive.troubleshootereditor.domain.quest.QuestObject
