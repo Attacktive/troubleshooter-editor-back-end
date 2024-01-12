@@ -1,7 +1,7 @@
 package com.github.attacktive.troubleshootereditor.extension
 
 import kotlin.reflect.full.companionObject
-import com.github.attacktive.troubleshootereditor.domain.Identifiable
+import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

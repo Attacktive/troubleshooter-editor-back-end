@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.domain
+package com.github.attacktive.troubleshootereditor.domain.common
 
 data class Properties(private val list: List<Property> = mutableListOf()) {
 	private val mutableKeys = list.map { it.key }.toMutableList()

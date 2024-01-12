@@ -1,4 +1,4 @@
-package com.github.attacktive.troubleshootereditor.domain
+package com.github.attacktive.troubleshootereditor.domain.common
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.attacktive.troubleshootereditor.domain.company.Company

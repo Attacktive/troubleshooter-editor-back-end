@@ -2,8 +2,8 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import com.github.attacktive.troubleshootereditor.domain.DiffType
-import com.github.attacktive.troubleshootereditor.domain.Properties
+import com.github.attacktive.troubleshootereditor.domain.common.DiffType
+import com.github.attacktive.troubleshootereditor.domain.common.Properties
 
 data class Company(val id: Int, val name: String, val vill: Long, private val _properties: Properties = Properties()) {
 	@Suppress("unused")
