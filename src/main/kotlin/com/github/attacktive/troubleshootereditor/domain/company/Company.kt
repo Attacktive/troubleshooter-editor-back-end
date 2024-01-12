@@ -5,18 +5,15 @@ import java.sql.PreparedStatement
 import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 
-data class Company(val id: Int, val name: String, val vill: Long, private val _properties: Properties = Properties()) {
-	@Suppress("unused")
-	val properties get() = _properties.toMap()
-
+data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties = Properties()) {
 	fun addProperty(property: Pair<String, String>) {
-		_properties.add(property)
+		properties.add(property)
 	}
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val vill = that.vill.takeUnless { vill == that.vill }
-		val properties = _properties.diff(that._properties)
+		val properties = properties.diff(that.properties)
 
 		return DiffResult(id, name, vill, properties)
 	}
