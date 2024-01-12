@@ -1,9 +1,12 @@
 package com.github.attacktive.troubleshootereditor.extension
 
+import java.io.File
 import kotlin.reflect.full.companionObject
 import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
 fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? {
 	return asSequence()
