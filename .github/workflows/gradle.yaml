@@ -27,6 +27,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: 'Build with Gradle'
-        uses: 'gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25'
+        uses: 'gradle/gradle-build-action@982da8e78c05368c70dac0351bb82647a9e9a5d2'
         with:
           arguments: 'compileKotlin compileTestKotlin test'
