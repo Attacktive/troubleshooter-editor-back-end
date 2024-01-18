@@ -7,12 +7,13 @@ import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 
 data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties = Properties()) {
-	fun addProperty(property: Pair<String, String>) {
-		properties.add(property)
-	}
+	fun addProperty(property: Pair<String, String>) = properties.add(property)
 
-	@JsonProperty
+	@JsonProperty(value = "properties", access = JsonProperty.Access.READ_ONLY)
 	fun properties() = properties.toMap()
+
+	@JsonProperty(value = "properties", access = JsonProperty.Access.WRITE_ONLY)
+	fun properties(properties: Properties) = addProperties(properties.toMap())
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
@@ -21,6 +22,8 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 
 		return DiffResult(id, name, vill, properties)
 	}
+
+	private fun addProperties(properties: Map<String, String>) = properties.entries.forEach { addProperty(it.toPair()) }
 
 	data class DiffResult(val id: Int, val name: String?, val vill: Long?, val properties: Properties) {
 		fun generateStatements(connection: Connection): List<PreparedStatement> {
