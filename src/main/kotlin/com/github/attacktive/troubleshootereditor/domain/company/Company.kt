@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 
@@ -9,6 +10,9 @@ data class Company(val id: Int, val name: String, val vill: Long, val properties
 	fun addProperty(property: Pair<String, String>) {
 		properties.add(property)
 	}
+
+	@JsonProperty
+	fun properties() = properties.toMap()
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
