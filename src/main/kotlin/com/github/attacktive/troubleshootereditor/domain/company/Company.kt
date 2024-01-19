@@ -40,7 +40,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 				statements.addLast(updateStatementForVill(connection))
 			}
 
-			properties.asSequence().map { property ->
+			properties.asSequence().mapNotNull { property ->
 				when (property.diffType) {
 					DiffType.NONE -> null
 					DiffType.ADDED -> insertStatementForProperty(connection, property.key, property.value)
