@@ -7,4 +7,6 @@
 
 It's the back-end of a save file editor of the game Troubleshooter: Abandoned Children.
 
-[The Front-end](https://github.com/Attacktive/troubleshooter-editor-front-end)
+[The Front-end](https://github.com/Attacktive/troubleshooter-editor-front-end-svelte)
+
+The [Vue.js](https://github.com/Attacktive/troubleshooter-editor-front-end-vue) variant and [React](https://github.com/Attacktive/troubleshooter-editor-front-end) version is currnetly discontinued in favor of this.
