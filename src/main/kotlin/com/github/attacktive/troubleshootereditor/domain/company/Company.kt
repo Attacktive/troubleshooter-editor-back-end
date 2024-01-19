@@ -2,18 +2,21 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonSetter
 import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 
-data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties = Properties()) {
+data class Company(val id: Int, val name: String, val vill: Long) {
+	val properties: Properties = Properties()
+
 	fun addProperty(property: Pair<String, String>) = properties.add(property)
 
-	@JsonProperty(value = "properties", access = JsonProperty.Access.READ_ONLY)
+	@JsonGetter(value = "properties")
 	fun properties() = properties.toMap()
 
-	@JsonProperty(value = "properties", access = JsonProperty.Access.WRITE_ONLY)
-	fun properties(properties: Properties) = addProperties(properties.toMap())
+	@JsonSetter(value = "properties")
+	fun properties(properties: Map<String, String>) = addProperties(properties)
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
