@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.attacktive"
-version = "1.0.1"
+version = "1.0.2"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {

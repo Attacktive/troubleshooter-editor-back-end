@@ -11,7 +11,8 @@ enum class EquipmentPosition(val value: String) {
 	LEG("Leg"),
 	INVENTORY1("Inventory1"),
 	INVENTORY2("Inventory2"),
-	GRENADEBAG("GrenadeBag"),
+	GRENADE_BAG("GrenadeBag"),
+	ALCHEMY_BAG("AlchemyBag"),
 	COSTUME("Costume");
 
 	fun cheatingStatements(connection: Connection): (Long) -> List<PreparedStatement> {
