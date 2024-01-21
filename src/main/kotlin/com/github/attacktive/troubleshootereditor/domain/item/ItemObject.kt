@@ -1,10 +1,11 @@
 package com.github.attacktive.troubleshootereditor.domain.item
 
 import java.sql.Connection
-import org.slf4j.LoggerFactory
+import java.sql.PreparedStatement
+import com.github.attacktive.troubleshootereditor.extension.logger
 
 object ItemObject {
-	private val logger = LoggerFactory.getLogger(ItemObject::class.java)
+	private val logger by logger()
 
 	fun selectItems(connection: Connection): List<Item> {
 		val statement = connection.prepareStatement(
@@ -23,15 +24,7 @@ object ItemObject {
 			""".trimIndent()
 		)
 
-		val items = mutableListOf<Item>()
-		statement.executeQuery().use {
-			while (it.next()) {
-				val item = Item.fromResultSet(it)
-				items.add(item)
-			}
-		}
-
-		return items
+		return getItemsFromStatement(statement)
 	}
 
 	fun selectEquippedItems(connection: Connection): List<Item> {
@@ -53,15 +46,7 @@ object ItemObject {
 			""".trimIndent()
 		)
 
-		val items = mutableListOf<Item>()
-		statement.executeQuery().use {
-			while (it.next()) {
-				val item = Item.fromResultSet(it)
-				items.add(item)
-			}
-		}
-
-		return items
+		return getItemsFromStatement(statement)
 	}
 
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
@@ -77,5 +62,17 @@ object ItemObject {
 			.flatten()
 			.onEach { statement -> logger.debug(statement.toString()) }
 			.forEach { statement -> statement.executeUpdate() }
+	}
+
+	private fun getItemsFromStatement(statement: PreparedStatement): List<Item> {
+		val items = mutableListOf<Item>()
+		statement.executeQuery().use {
+			while (it.next()) {
+				val item = Item.fromResultSet(it)
+				items.add(item)
+			}
+		}
+
+		return items
 	}
 }

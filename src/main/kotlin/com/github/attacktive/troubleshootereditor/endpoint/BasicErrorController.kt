@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorContro
 
 @Controller
 class BasicErrorController(serverProperties: ServerProperties?): SpringBasicErrorController(DefaultErrorAttributes(), serverProperties?.error) {
-	val logger by logger()
+	private val logger by logger()
 
 	override fun error(request: HttpServletRequest): ResponseEntity<MutableMap<String, Any>> {
 		val exception = request.getAttribute(RequestDispatcher.ERROR_EXCEPTION)
