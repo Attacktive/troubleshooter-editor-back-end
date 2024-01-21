@@ -18,6 +18,7 @@ object RosterObject {
 					left join rosterProperty rp on r.rosterID = rp.rosterID
 					left join rosterPropertyMaster rpm on rp.masterIndex = rpm.masterIndex
 				group by r.rosterID,r.rosterName,r.rosterClass,r.rosterLv,r.rosterExp
+				order by r.rosterID
 			""".trimIndent()
 		)
 

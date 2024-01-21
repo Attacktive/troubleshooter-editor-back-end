@@ -23,6 +23,7 @@ object ItemObject {
 					left join itemProperty ip on i.itemID = ip.itemID
 					left join itemPropertyMaster ipm on ip.masterIndex = ipm.masterIndex
 				group by i.itemID, i.itemType, i.itemCount, ism.masterName
+				order by i.itemID
 			""".trimIndent()
 		)
 
