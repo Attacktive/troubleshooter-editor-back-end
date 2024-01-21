@@ -6,6 +6,8 @@ import java.sql.PreparedStatement
 interface PropertiesDiffAware {
 	val properties: Properties
 
+	fun generateStatements(connection: Connection): List<PreparedStatement>
+
 	fun getStatementsForProperties(connection: Connection): Sequence<PreparedStatement> = properties.asSequence().mapNotNull { property ->
 		when (property.diffType) {
 			DiffType.NONE -> null

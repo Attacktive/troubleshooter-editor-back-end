@@ -18,7 +18,7 @@ data class Company(val id: Int, val name: String, val vill: Long): PropertiesAwa
 	}
 
 	data class DiffResult(val id: Int, val name: String?, val vill: Long?, override val properties: Properties): PropertiesDiffAware {
-		fun generateStatements(connection: Connection): List<PreparedStatement> {
+		override fun generateStatements(connection: Connection): List<PreparedStatement> {
 			val statements: List<PreparedStatement> = mutableListOf()
 
 			if (name != null) {
