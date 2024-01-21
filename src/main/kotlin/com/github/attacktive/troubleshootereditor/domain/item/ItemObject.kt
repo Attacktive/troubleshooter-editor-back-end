@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.domain.item
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import com.github.attacktive.troubleshootereditor.extension.findById
 import com.github.attacktive.troubleshootereditor.extension.logger
 
 object ItemObject {
@@ -54,7 +55,7 @@ object ItemObject {
 
 		return oldItems.asSequence()
 			.mapNotNull { oldItem ->
-				val newItem = newItems.find { it.id == oldItem.id }
+				val newItem = newItems.findById(oldItem.id)
 				if (newItem == null) {
 					// no plan to addition nor deletion
 					null

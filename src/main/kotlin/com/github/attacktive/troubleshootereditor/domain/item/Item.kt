@@ -6,16 +6,21 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
 
-data class Item(val id: Long, val type: String, val count: Long, val status: String, var equipmentPosition: EquipmentPosition? = null): PropertiesAware {
+data class Item(val id: Long, val type: String, val count: Long, val status: String, var equipmentPosition: EquipmentPosition? = null): Identifiable<Long>, PropertiesAware {
 	constructor(id: Long, type: String, count: Long, status: String, json: String, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, equipmentPosition) {
 		addProperties(deserialize(json))
 	}
 
 	override val properties: Properties = Properties()
+
+	override fun getId(): Long {
+		return id
+	}
 
 	companion object {
 		fun fromResultSet(resultSet: ResultSet): Item {
