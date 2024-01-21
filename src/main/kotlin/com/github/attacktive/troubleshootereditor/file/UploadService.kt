@@ -13,7 +13,7 @@ class UploadService {
 		private val tmpdir = System.getProperty("java.io.tmpdir")
 	}
 
-	val logger by logger()
+	private val logger by logger()
 
 	fun saveFile(multipartFile: MultipartFile): String {
 		val directory = File(tmpdir)

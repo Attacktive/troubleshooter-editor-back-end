@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalControllerExceptionHandler {
-	val logger by logger()
+	private val logger by logger()
 
 	@ExceptionHandler(HttpMessageConversionException::class)
 	fun handleHttpMessageConversionException(exception: HttpMessageConversionException): ResponseEntity<ErrorResponse> {
