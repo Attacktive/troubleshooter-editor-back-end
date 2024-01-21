@@ -37,11 +37,13 @@ class SqliteService {
 		val file = File(tmpdir, fileName)
 		val url = file.getJdbcUrl()
 		DriverManager.getConnection(url).use { connection ->
-			val oldCompany = CompanyObject.selectCompany(connection)
-			val newCompany = edited.company
+			val companyDiffResult = CompanyObject.selectAndDiff(connection, edited.company)
+			companyDiffResult.generateStatements(connection).forEach { it.executeUpdate() }
 
-			val diffResult = oldCompany.diff(newCompany)
-			diffResult.generateStatements(connection).forEach { it.executeUpdate() }
+			val itemDiffResult = ItemObject.selectAndDiff(connection, edited.items)
+			itemDiffResult.asSequence()
+				.flatMap { it.generateStatements(connection) }
+				.forEach { it.executeUpdate() }
 		}
 
 		return file.absolutePath
