@@ -5,7 +5,6 @@ import java.sql.DriverManager
 import com.github.attacktive.troubleshootereditor.domain.common.SaveData
 import com.github.attacktive.troubleshootereditor.domain.company.CompanyObject
 import com.github.attacktive.troubleshootereditor.domain.item.ItemObject
-import com.github.attacktive.troubleshootereditor.domain.quest.QuestObject
 import com.github.attacktive.troubleshootereditor.domain.roster.RosterObject
 import com.github.attacktive.troubleshootereditor.extension.getJdbcUrl
 import org.springframework.stereotype.Service
@@ -26,10 +25,9 @@ class SqliteService {
 		DriverManager.getConnection(url).use {
 			val company = CompanyObject.selectCompany(it)
 			val items = ItemObject.selectItems(it)
-			val quests = QuestObject.selectQuests(it)
 			val rosters = RosterObject.selectRosters(it)
 
-			return SaveData(company, quests, rosters, items)
+			return SaveData(company, rosters, items)
 		}
 	}
 
@@ -41,7 +39,9 @@ class SqliteService {
 			companyDiffResult.generateStatements(connection).forEach { it.executeUpdate() }
 
 			val itemDiffResult = ItemObject.selectAndDiff(connection, edited.items)
-			itemDiffResult.asSequence()
+			val rosterDiffResult = RosterObject.selectAndDiff(connection, edited.rosters)
+
+			(itemDiffResult + rosterDiffResult).asSequence()
 				.flatMap { it.generateStatements(connection) }
 				.forEach { it.executeUpdate() }
 		}

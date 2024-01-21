@@ -2,15 +2,34 @@ package com.github.attacktive.troubleshootereditor.extension
 
 import java.io.File
 import kotlin.reflect.full.companionObject
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.attacktive.troubleshootereditor.domain.common.Diffable
 import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
-fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? {
+fun String.deserializeAsStringToStringMap(): Map<String, String> {
+	val objectMapper = jacksonObjectMapper()
+	return objectMapper.readValue(this)
+}
+
+fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.getId() == id }
+
+fun <I, T: Diffable<T, I, D>, D> Collection<T>.getDiffResults(those: Collection<T>): List<D> {
 	return asSequence()
-		.find { it.getId() == id }
+		.mapNotNull { oldItem ->
+			val newItem = those.findById(oldItem.getId())
+			if (newItem == null) {
+				// no plan to addition nor deletion
+				null
+			} else {
+				oldItem.diff(newItem)
+			}
+		}
+		.toList()
 }
 
 fun <T: Any> T.logger(): Lazy<Logger> {

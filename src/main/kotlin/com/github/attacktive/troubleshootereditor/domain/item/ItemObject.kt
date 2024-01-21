@@ -3,6 +3,7 @@ package com.github.attacktive.troubleshootereditor.domain.item
 import java.sql.Connection
 import java.sql.PreparedStatement
 import com.github.attacktive.troubleshootereditor.extension.findById
+import com.github.attacktive.troubleshootereditor.extension.getDiffResults
 import com.github.attacktive.troubleshootereditor.extension.logger
 
 object ItemObject {
@@ -43,7 +44,7 @@ object ItemObject {
 					left join itemStatusMaster ism on i.itemStatus = ism.masterIndex
 					left join itemProperty ip on i.itemID = ip.itemID
 					left join itemPropertyMaster ipm on ip.masterIndex = ipm.masterIndex
-				group by i.itemID, i.itemType, i.itemCount, ism.masterName
+				group by i.itemID, i.itemType, i.itemCount, ism.masterName, ie.positionKey
 			""".trimIndent()
 		)
 
@@ -52,18 +53,7 @@ object ItemObject {
 
 	fun selectAndDiff(connection: Connection, newItems: Collection<Item>): List<Item.DiffResult> {
 		val oldItems = selectItems(connection)
-
-		return oldItems.asSequence()
-			.mapNotNull { oldItem ->
-				val newItem = newItems.findById(oldItem.id)
-				if (newItem == null) {
-					// no plan to addition nor deletion
-					null
-				} else {
-					oldItem.diff(newItem)
-				}
-			}
-			.toList()
+		return oldItems.getDiffResults(newItems)
 	}
 
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
