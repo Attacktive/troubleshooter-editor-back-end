@@ -50,4 +50,9 @@ object CompanyObject {
 
 		return company
 	}
+
+	fun selectAndDiff(connection: Connection, newCompany: Company): Company.DiffResult {
+		val oldCompany = selectCompany(connection)
+		return oldCompany.diff(newCompany)
+	}
 }

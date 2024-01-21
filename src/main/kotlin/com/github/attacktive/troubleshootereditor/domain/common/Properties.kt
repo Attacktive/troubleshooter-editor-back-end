@@ -1,9 +1,6 @@
 package com.github.attacktive.troubleshootereditor.domain.common
 
 data class Properties(private val list: List<Property> = mutableListOf()) {
-	private val mutableKeys = list.map { it.key }.toMutableList()
-
-	fun isNotEmpty() = list.isNotEmpty()
 	fun add(pair: Pair<String, String>) = list.addLast(Property(pair))
 	fun asSequence() = list.asSequence()
 	fun toMap() = list.associate { it.key to it.value }
@@ -11,7 +8,7 @@ data class Properties(private val list: List<Property> = mutableListOf()) {
 	private fun findByKey(key: String) = list.find { it.key == key }
 
 	fun diff(those: Properties): Properties {
-		val thoseKeys = those.mutableKeys
+		val thoseKeys = those.list.map { it.key }.toMutableList()
 
 		val withThese = list.map { `this` ->
 			val key = `this`.key

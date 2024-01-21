@@ -2,21 +2,12 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import com.fasterxml.jackson.annotation.JsonGetter
-import com.fasterxml.jackson.annotation.JsonSetter
-import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
+import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
+import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
 
-data class Company(val id: Int, val name: String, val vill: Long) {
-	val properties: Properties = Properties()
-
-	fun addProperty(property: Pair<String, String>) = properties.add(property)
-
-	@JsonGetter(value = "properties")
-	fun properties() = properties.toMap()
-
-	@JsonSetter(value = "properties")
-	fun properties(properties: Map<String, String>) = addProperties(properties)
+data class Company(val id: Int, val name: String, val vill: Long): PropertiesAware {
+	override val properties: Properties = Properties()
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
@@ -26,9 +17,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 		return DiffResult(id, name, vill, properties)
 	}
 
-	private fun addProperties(properties: Map<String, String>) = properties.entries.forEach { addProperty(it.toPair()) }
-
-	data class DiffResult(val id: Int, val name: String?, val vill: Long?, val properties: Properties) {
+	data class DiffResult(val id: Int, val name: String?, val vill: Long?, override val properties: Properties): PropertiesDiffAware {
 		fun generateStatements(connection: Connection): List<PreparedStatement> {
 			val statements: List<PreparedStatement> = mutableListOf()
 
@@ -40,15 +29,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 				statements.addLast(updateStatementForVill(connection))
 			}
 
-			properties.asSequence().mapNotNull { property ->
-				when (property.diffType) {
-					DiffType.NONE -> null
-					DiffType.ADDED -> insertStatementForProperty(connection, property.key, property.value)
-					DiffType.MODIFIED -> updateStatementForProperty(connection, property.key, property.value)
-					DiffType.REMOVED -> deleteStatementForProperty(connection, property.key)
-				}
-			}
-			.forEach { statements.addLast(it) }
+			getStatementsForProperties(connection).forEach { statements.addLast(it) }
 
 			return statements
 		}
@@ -67,7 +48,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 			""".trimIndent()
 		)
 
-		private fun insertStatementForProperty(connection: Connection, propertyName: String, propertyValue: String) = connection.prepareStatement("""
+		override fun insertStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement("""
 				insert into companyProperty (companyId, masterIndex, cpValue)
 				select
 					$id,
@@ -78,7 +59,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 			""".trimIndent()
 		)
 
-		private fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String) = connection.prepareStatement("""
+		override fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement("""
 				update companyProperty
 				set cpValue = '$propertyValue'
 				where companyID = $id and masterIndex = (
@@ -89,7 +70,7 @@ data class Company(val id: Int, val name: String, val vill: Long) {
 			""".trimIndent()
 		)
 
-		private fun deleteStatementForProperty(connection: Connection, propertyName: String) = connection.prepareStatement("""
+		override fun deleteStatementForProperty(connection: Connection, propertyName: String): PreparedStatement = connection.prepareStatement("""
 				delete from companyProperty
 				where masterIndex = (
 					select masterIndex

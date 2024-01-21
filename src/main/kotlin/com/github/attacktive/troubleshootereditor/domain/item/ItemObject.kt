@@ -49,6 +49,22 @@ object ItemObject {
 		return getItemsFromStatement(statement)
 	}
 
+	fun selectAndDiff(connection: Connection, newItems: Collection<Item>): List<Item.DiffResult> {
+		val oldItems = selectItems(connection)
+
+		return oldItems.asSequence()
+			.mapNotNull { oldItem ->
+				val newItem = newItems.find { it.id == oldItem.id }
+				if (newItem == null) {
+					// no plan to addition nor deletion
+					null
+				} else {
+					oldItem.diff(newItem)
+				}
+			}
+			.toList()
+	}
+
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
 		itemsPerPosition.map {
 			val position = it.key!!
