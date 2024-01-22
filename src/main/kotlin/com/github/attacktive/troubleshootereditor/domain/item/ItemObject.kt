@@ -2,7 +2,6 @@ package com.github.attacktive.troubleshootereditor.domain.item
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import com.github.attacktive.troubleshootereditor.extension.findById
 import com.github.attacktive.troubleshootereditor.extension.getDiffResults
 import com.github.attacktive.troubleshootereditor.extension.logger
 
