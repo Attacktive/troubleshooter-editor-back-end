@@ -9,7 +9,7 @@ interface PropertiesAware {
 	fun addProperty(property: Pair<String, String>) = properties.add(property)
 
 	@JsonGetter(value = "properties")
-	fun properties() = properties.toMap()
+	fun properties() = properties.toMap().toSortedMap()
 
 	@JsonSetter(value = "properties")
 	fun properties(properties: Map<String, String>) = addProperties(properties)

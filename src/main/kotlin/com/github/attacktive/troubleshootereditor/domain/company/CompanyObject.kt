@@ -36,7 +36,6 @@ object CompanyObject {
 				left join companyProperty cp on c.companyID = cp.companyID
 				left join companyPropertyMaster cpm on cp.masterIndex = cpm.masterIndex
 			where c.companyID = ${company.id}
-			order by cpm.masterName
 		""".trimIndent()
 		)
 
