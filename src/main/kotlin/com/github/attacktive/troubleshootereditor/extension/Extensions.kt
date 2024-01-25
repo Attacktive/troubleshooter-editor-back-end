@@ -1,6 +1,7 @@
 package com.github.attacktive.troubleshootereditor.extension
 
 import java.io.File
+import java.util.function.Supplier
 import kotlin.reflect.full.companionObject
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -10,7 +11,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 inline infix fun <reified E : Enum<E>, V> ((E) -> V).findBy(value: V): E {
-	return enumValues<E>().firstOrNull { this(it) == value } ?: throw IllegalArgumentException("No enum constant ${javaClass.canonicalName}.$value.")
+	return findBy(value) { IllegalArgumentException("No enum constant ${javaClass.canonicalName}.$value.") }
+}
+
+inline fun <reified E : Enum<E>, V> ((E) -> V).findBy(value: V, throwableSupplier: Supplier<Throwable>): E {
+	return enumValues<E>().firstOrNull { this(it) == value } ?: throw throwableSupplier.get()
 }
 
 fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
