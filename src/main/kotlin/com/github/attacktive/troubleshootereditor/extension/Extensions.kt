@@ -9,6 +9,10 @@ import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+inline infix fun <reified E : Enum<E>, V> ((E) -> V).findBy(value: V): E {
+	return enumValues<E>().firstOrNull { this(it) == value } ?: throw IllegalArgumentException("No enum constant ${javaClass.canonicalName}.$value.")
+}
+
 fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
 fun String.deserializeAsStringToStringMap(): Map<String, String> {

@@ -8,11 +8,11 @@ interface PropertiesAware {
 
 	fun addProperty(property: Pair<String, String>) = properties.add(property)
 
+	fun addProperties(properties: Map<String, String>) = properties.entries.forEach { addProperty(it.toPair()) }
+
 	@JsonGetter(value = "properties")
 	fun properties() = properties.toMap().toSortedMap()
 
 	@JsonSetter(value = "properties")
 	fun properties(properties: Map<String, String>) = addProperties(properties)
-
-	fun addProperties(properties: Map<String, String>) = properties.entries.forEach { addProperty(it.toPair()) }
 }

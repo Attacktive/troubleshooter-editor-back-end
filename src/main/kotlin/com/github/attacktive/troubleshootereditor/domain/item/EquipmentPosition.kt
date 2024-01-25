@@ -34,11 +34,6 @@ enum class EquipmentPosition(val value: String) {
 	companion object {
 		private val logger = LoggerFactory.getLogger(EquipmentPosition::class.java)
 
-		fun fromValue(value: String): EquipmentPosition {
-			return entries.firstOrNull { it.value == value }
-				?: throw IllegalArgumentException("No enum constant ${EquipmentPosition::class.java.canonicalName}.$value.")
-		}
-
 		private fun clearExisting(id: Long) = """
 			delete from itemProperty
 			where itemID = $id

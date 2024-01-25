@@ -9,6 +9,7 @@ import com.github.attacktive.troubleshootereditor.domain.common.Properties
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
 import com.github.attacktive.troubleshootereditor.extension.deserializeAsStringToStringMap
+import com.github.attacktive.troubleshootereditor.extension.findBy
 
 data class Item(val id: Long, val type: String, val count: Long, val status: String, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult>, PropertiesAware {
 	constructor(id: Long, type: String, count: Long, status: String, propertiesJson: String, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, equipmentPosition) {
@@ -33,7 +34,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 				var equipmentPosition: EquipmentPosition? = null
 				try {
 					val positionKey = resultSet.getString("positionKey")
-					equipmentPosition = EquipmentPosition.fromValue(positionKey)
+					equipmentPosition = EquipmentPosition::value findBy positionKey
 				} catch (sqlException: SQLException) {
 					val isExpectedException = Regex(".*no such column.*", RegexOption.IGNORE_CASE).matches(sqlException.message ?: "")
 					if (!isExpectedException) {

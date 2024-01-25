@@ -6,7 +6,5 @@ import com.github.attacktive.troubleshootereditor.domain.item.Item
 import com.github.attacktive.troubleshootereditor.domain.roster.Roster
 
 data class SaveData(val company: Company, val rosters: List<Roster>, val items: List<Item>) {
-	override fun toString(): String {
-		return jacksonObjectMapper().writeValueAsString(this)
-	}
+	override fun toString(): String = jacksonObjectMapper().writeValueAsString(this)
 }
