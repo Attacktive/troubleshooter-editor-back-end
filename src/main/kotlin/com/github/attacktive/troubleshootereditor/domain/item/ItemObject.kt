@@ -57,29 +57,23 @@ object ItemObject {
 	}
 
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
-		itemsPerPosition.map {
-			val position = it.key!!
-			val items = it.value
+		itemsPerPosition
+			.map {
+				val position = it.key!!
+				val items = it.value
 
-			val cheatingFunction = position.cheatingStatements(connection)
+				val cheatingFunction = position.cheatingStatements(connection)
 
-			items.map { item -> cheatingFunction(item.id) }
-				.flatten()
-		}
+				items.map { item -> cheatingFunction(item.id) }.flatten()
+			}
 			.flatten()
 			.onEach { statement -> logger.debug(statement.toString()) }
 			.forEach { statement -> statement.executeUpdate() }
 	}
 
 	private fun getItemsFromStatement(statement: PreparedStatement): List<Item> {
-		val items = mutableListOf<Item>()
 		statement.executeQuery().use {
-			while (it.next()) {
-				val item = Item.fromResultSet(it)
-				items.add(item)
-			}
+			return Item.fromResultSet(it)
 		}
-
-		return items
 	}
 }

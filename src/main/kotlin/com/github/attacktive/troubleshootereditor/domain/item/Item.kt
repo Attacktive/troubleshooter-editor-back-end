@@ -11,30 +11,40 @@ import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAw
 import com.github.attacktive.troubleshootereditor.extension.deserializeAsStringToStringMap
 
 data class Item(val id: Long, val type: String, val count: Long, val status: String, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult>, PropertiesAware {
-	constructor(id: Long, type: String, count: Long, status: String, json: String, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, equipmentPosition) {
-		addProperties(json.deserializeAsStringToStringMap())
+	constructor(id: Long, type: String, count: Long, status: String, propertiesJson: String, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, equipmentPosition) {
+		addProperties(propertiesJson.deserializeAsStringToStringMap())
 	}
 
 	override val properties: Properties = Properties()
 
-	override fun getId(): Long {
-		return id
-	}
+	override fun getId() = id
 
 	companion object {
-		fun fromResultSet(resultSet: ResultSet): Item {
-			val id = resultSet.getLong("itemID")
-			val type = resultSet.getString("itemType")
-			val count = resultSet.getLong("itemCount")
-			val status = resultSet.getString("masterName")
-			val properties = resultSet.getString("properties")
-			var equipmentPosition: EquipmentPosition? = null
-			try {
-				val positionKey = resultSet.getString("positionKey")
-				equipmentPosition = EquipmentPosition.fromValue(positionKey)
-			} catch (_: SQLException) { }
+		fun fromResultSet(resultSet: ResultSet): List<Item> {
+			val items: List<Item> = mutableListOf()
 
-			return Item(id, type, count, status, properties, equipmentPosition)
+			while (resultSet.next()) {
+				val id = resultSet.getLong("itemID")
+				val type = resultSet.getString("itemType")
+				val count = resultSet.getLong("itemCount")
+				val status = resultSet.getString("masterName")
+				val properties = resultSet.getString("properties")
+
+				var equipmentPosition: EquipmentPosition? = null
+				try {
+					val positionKey = resultSet.getString("positionKey")
+					equipmentPosition = EquipmentPosition.fromValue(positionKey)
+				} catch (sqlException: SQLException) {
+					val isExpectedException = Regex(".*no such column.*", RegexOption.IGNORE_CASE).matches(sqlException.message ?: "")
+					if (!isExpectedException) {
+						throw sqlException
+					}
+				}
+
+				items.addLast(Item(id, type, count, status, properties, equipmentPosition))
+			}
+
+			return items
 		}
 	}
 
@@ -42,7 +52,6 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		val type = that.type.takeUnless { type == that.type }
 		val count = that.count.takeUnless { count == that.count }
 		val status = that.status.takeUnless { status == that.status }
-
 		val properties = properties.diff(that.properties)
 
 		return DiffResult(id, type, count, status, properties)
