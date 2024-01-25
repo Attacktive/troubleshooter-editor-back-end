@@ -2,12 +2,33 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
+import com.github.attacktive.troubleshootereditor.extension.deserializeAsStringToStringMap
 
 data class Company(val id: Int, val name: String, val vill: Long): PropertiesAware {
+	constructor(id: Int, name: String, vill: Long, propertiesJson: String): this(id, name, vill) {
+		addProperties(propertiesJson.deserializeAsStringToStringMap())
+	}
+
 	override val properties: Properties = Properties()
+
+	companion object {
+		fun fromResultSet(resultSet: ResultSet): Company {
+			if (resultSet.next()) {
+				val companyId = resultSet.getInt("companyID")
+				val companyName = resultSet.getString("CompanyName")
+				val vill = resultSet.getLong("Vill")
+				val properties = resultSet.getString("properties")
+
+				return Company(companyId, companyName, vill, properties)
+			} else {
+				throw IllegalStateException("The save file doesn't seem to have a company data at all!")
+			}
+		}
+	}
 
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }

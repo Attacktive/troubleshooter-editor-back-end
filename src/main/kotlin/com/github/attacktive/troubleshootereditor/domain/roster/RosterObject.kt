@@ -1,6 +1,7 @@
 package com.github.attacktive.troubleshootereditor.domain.roster
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import com.github.attacktive.troubleshootereditor.extension.getDiffResults
 
 object RosterObject {
@@ -22,19 +23,17 @@ object RosterObject {
 			""".trimIndent()
 		)
 
-		val rosters = mutableListOf<Roster>()
-		statement.executeQuery().use {
-			while (it.next()) {
-				val roster = Roster.fromResultSet(it)
-				rosters.add(roster)
-			}
-		}
-
-		return rosters
+		return getItemsFromStatement(statement)
 	}
 
 	fun selectAndDiff(connection: Connection, newRosters: Collection<Roster>): List<Roster.DiffResult> {
 		val oldRosters = selectRosters(connection)
 		return oldRosters.getDiffResults(newRosters)
+	}
+
+	private fun getItemsFromStatement(statement: PreparedStatement): List<Roster> {
+		statement.executeQuery().use {
+			return Roster.fromResultSet(it)
+		}
 	}
 }
