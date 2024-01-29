@@ -92,7 +92,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 
 		override fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement("""
 				update itemProperty
-				set cpValue = '$propertyValue'
+				set propValue = '$propertyValue'
 				where itemID = $id and masterIndex = (
 					select masterIndex
 					from itemPropertyMaster
