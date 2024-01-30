@@ -1,14 +1,17 @@
 package com.github.attacktive.troubleshootereditor.domain.common
 
+import java.util.function.Predicate
+
 data class Properties(private val list: List<Property> = mutableListOf()) {
+	fun containsKey(key: String) = keys().contains(key)
+	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
+
 	fun add(pair: Pair<String, String>) = list.addLast(Property(pair))
 	fun asSequence() = list.asSequence()
 	fun toMap() = list.associate { it.key to it.value }
 
-	private fun findByKey(key: String) = list.find { it.key == key }
-
 	fun diff(those: Properties): Properties {
-		val thoseKeys = those.list.map { it.key }.toMutableList()
+		val thoseKeys = those.keys().toMutableList()
 
 		val withThese = list.map { `this` ->
 			val key = `this`.key
@@ -36,4 +39,8 @@ data class Properties(private val list: List<Property> = mutableListOf()) {
 
 		return Properties(withThese + withThose)
 	}
+
+	private fun keys() = list.map { it.key }.toSet()
+
+	private fun findByKey(key: String) = list.find { it.key == key }
 }

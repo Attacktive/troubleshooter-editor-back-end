@@ -58,6 +58,14 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 		return DiffResult(id, type, count, status, properties)
 	}
 
+	fun isGear(): Boolean {
+		if (properties.containsKey("Binded") || properties.containsKey("Lv") || properties.containsKey("Transmog")) {
+			return true
+		}
+
+		return properties.containsKeyThat{ it.matches(Regex("Option/.+", RegexOption.IGNORE_CASE)) }
+	}
+
 	data class DiffResult(val id: Long, val type: String?, val count: Long?, val status: String?, override val properties: Properties): PropertiesDiffAware {
 		override fun generateStatements(connection: Connection): List<PreparedStatement> {
 			val statements: List<PreparedStatement> = mutableListOf()
