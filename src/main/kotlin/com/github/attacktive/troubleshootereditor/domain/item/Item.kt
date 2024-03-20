@@ -22,7 +22,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 
 	companion object {
 		fun fromResultSet(resultSet: ResultSet): List<Item> {
-			val items: List<Item> = mutableListOf()
+			val items: MutableList<Item> = mutableListOf()
 
 			while (resultSet.next()) {
 				val id = resultSet.getLong("itemID")
@@ -42,7 +42,7 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 					}
 				}
 
-				items.addLast(Item(id, type, count, status, properties, equipmentPosition))
+				items.add(Item(id, type, count, status, properties, equipmentPosition))
 			}
 
 			return items
@@ -68,21 +68,21 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 
 	data class DiffResult(val id: Long, val type: String?, val count: Long?, val status: String?, override val properties: Properties): PropertiesDiffAware {
 		override fun generateStatements(connection: Connection): List<PreparedStatement> {
-			val statements: List<PreparedStatement> = mutableListOf()
+			val statements: MutableList<PreparedStatement> = mutableListOf()
 
 			if (type != null) {
-				statements.addLast(updateStatementForType(connection))
+				statements.add(updateStatementForType(connection))
 			}
 
 			if (count != null) {
-				statements.addLast(updateStatementForCount(connection))
+				statements.add(updateStatementForCount(connection))
 			}
 
 			if (status != null) {
-				statements.addLast(updateStatementForStatus(connection))
+				statements.add(updateStatementForStatus(connection))
 			}
 
-			getStatementsForProperties(connection).forEach { statements.addLast(it) }
+			getStatementsForProperties(connection).forEach { statements.add(it) }
 
 			return statements
 		}

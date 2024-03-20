@@ -2,7 +2,7 @@ package com.github.attacktive.troubleshootereditor.domain.common
 
 import java.util.function.Predicate
 
-data class Properties(private val list: List<Property> = mutableListOf()) {
+data class Properties(private val list: MutableList<Property> = mutableListOf()) {
 	fun containsKey(key: String) = keys().contains(key)
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
 
@@ -37,7 +37,7 @@ data class Properties(private val list: List<Property> = mutableListOf()) {
 			that.withDiffType(DiffType.ADDED)
 		}
 
-		return Properties(withThese + withThose)
+		return Properties((withThese + withThose).toMutableList())
 	}
 
 	private fun keys() = list.map { it.key }.toSet()
