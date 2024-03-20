@@ -20,7 +20,7 @@ data class Roster(val id: Long, val name: String, val `class`: String, val level
 
 	companion object {
 		fun fromResultSet(resultSet: ResultSet): List<Roster> {
-			val rosters: List<Roster> = mutableListOf()
+			val rosters: MutableList<Roster> = mutableListOf()
 
 			while (resultSet.next()) {
 				val id = resultSet.getLong("rosterID")
@@ -30,7 +30,7 @@ data class Roster(val id: Long, val name: String, val `class`: String, val level
 				val exp = resultSet.getLong("rosterExp")
 				val properties = resultSet.getString("properties")
 
-				rosters.addLast(Roster(id, name, `class`, level, exp, properties))
+				rosters.add(Roster(id, name, `class`, level, exp, properties))
 			}
 
 			return rosters
@@ -49,25 +49,25 @@ data class Roster(val id: Long, val name: String, val `class`: String, val level
 
 	data class DiffResult(val id: Long, val name: String?, val `class`: String?, val level: Long?, val exp: Long?, override val properties: Properties): PropertiesDiffAware {
 		override fun generateStatements(connection: Connection): List<PreparedStatement> {
-			val statements: List<PreparedStatement> = mutableListOf()
+			val statements: MutableList<PreparedStatement> = mutableListOf()
 
 			if (name != null) {
-				statements.addLast(updateStatementForName(connection))
+				statements.add(updateStatementForName(connection))
 			}
 
 			if (`class` != null) {
-				statements.addLast(updateStatementForClass(connection))
+				statements.add(updateStatementForClass(connection))
 			}
 
 			if (level != null) {
-				statements.addLast(updateStatementForLevel(connection))
+				statements.add(updateStatementForLevel(connection))
 			}
 
 			if (exp != null) {
-				statements.addLast(updateStatementForExp(connection))
+				statements.add(updateStatementForExp(connection))
 			}
 
-			getStatementsForProperties(connection).forEach { statements.addLast(it) }
+			getStatementsForProperties(connection).forEach { statements.add(it) }
 
 			return statements
 		}
