@@ -1,5 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+group = "com.github.attacktive"
+version = "1.2.0"
+java.sourceCompatibility = JavaVersion.VERSION_21
+
+val exposedVersion = "0.49.0"
+
 plugins {
 	val kotlinPluginVersion = "1.9.23"
 
@@ -9,10 +15,6 @@ plugins {
 	kotlin("plugin.spring") version kotlinPluginVersion
 	kotlin("plugin.jpa") version kotlinPluginVersion
 }
-
-group = "com.github.attacktive"
-version = "1.2.0"
-java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
 	compileOnly {
@@ -29,7 +31,13 @@ dependencies {
 	implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
 	implementation("org.xerial", "sqlite-jdbc")
+	implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+	implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+	implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
+
 	annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
+
+	testImplementation(kotlin("test"))
 	testImplementation("org.springframework.boot", "spring-boot-starter-test") {
 		exclude(module = "junit")
 		exclude(module = "junit-vintage-engine")
@@ -39,7 +47,6 @@ dependencies {
 	testImplementation("com.jayway.jsonpath", "json-path", "2.9.0") {
 		because("Dependency maven:com.jayway.jsonpath:json-path:2.8.0 is vulnerable CVE-2023-51074 5.3 Out-of-bounds Write vulnerability with Medium severity found")
 	}
-	testImplementation(kotlin("test"))
 }
 
 tasks.withType<KotlinCompile> {

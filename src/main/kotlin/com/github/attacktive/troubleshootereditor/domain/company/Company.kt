@@ -2,34 +2,11 @@ package com.github.attacktive.troubleshootereditor.domain.company
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
-import com.github.attacktive.troubleshootereditor.extension.deserializeAsStringToStringMap
 
-data class Company(val id: Int, val name: String, val vill: Long): PropertiesAware {
-	constructor(id: Int, name: String, vill: Long, propertiesJson: String): this(id, name, vill) {
-		addProperties(propertiesJson.deserializeAsStringToStringMap())
-	}
-
-	override val properties: Properties = Properties()
-
-	companion object {
-		fun fromResultSet(resultSet: ResultSet): Company {
-			if (resultSet.next()) {
-				val companyId = resultSet.getInt("companyID")
-				val companyName = resultSet.getString("CompanyName")
-				val vill = resultSet.getLong("Vill")
-				val properties = resultSet.getString("properties")
-
-				return Company(companyId, companyName, vill, properties)
-			} else {
-				throw IllegalStateException("The save file doesn't seem to have a company data at all!")
-			}
-		}
-	}
-
+data class Company(val id: Int, val name: String, val vill: Long, override val properties: Properties): PropertiesAware {
 	fun diff(that: Company): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val vill = that.vill.takeUnless { vill == that.vill }
@@ -55,21 +32,24 @@ data class Company(val id: Int, val name: String, val vill: Long): PropertiesAwa
 			return statements
 		}
 
-		private fun updateStatementForName(connection: Connection) = connection.prepareStatement("""
+		private fun updateStatementForName(connection: Connection) = connection.prepareStatement(
+			"""
 				update company
 				set CompanyName = '$name'
 				where companyID = $id
 			""".trimIndent()
 		)
 
-		private fun updateStatementForVill(connection: Connection) = connection.prepareStatement("""
+		private fun updateStatementForVill(connection: Connection) = connection.prepareStatement(
+			"""
 				update company
 				set Vill = $vill
 				where companyID = $id
 			""".trimIndent()
 		)
 
-		override fun insertStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement("""
+		override fun insertStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement(
+			"""
 				insert into companyProperty (companyId, masterIndex, cpValue)
 				select
 					$id,
@@ -80,7 +60,8 @@ data class Company(val id: Int, val name: String, val vill: Long): PropertiesAwa
 			""".trimIndent()
 		)
 
-		override fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement("""
+		override fun updateStatementForProperty(connection: Connection, propertyName: String, propertyValue: String): PreparedStatement = connection.prepareStatement(
+			"""
 				update companyProperty
 				set cpValue = '$propertyValue'
 				where companyID = $id and masterIndex = (
@@ -91,7 +72,8 @@ data class Company(val id: Int, val name: String, val vill: Long): PropertiesAwa
 			""".trimIndent()
 		)
 
-		override fun deleteStatementForProperty(connection: Connection, propertyName: String): PreparedStatement = connection.prepareStatement("""
+		override fun deleteStatementForProperty(connection: Connection, propertyName: String): PreparedStatement = connection.prepareStatement(
+			"""
 				delete from companyProperty
 				where masterIndex = (
 					select masterIndex

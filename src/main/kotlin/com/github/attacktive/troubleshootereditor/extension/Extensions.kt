@@ -7,8 +7,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.attacktive.troubleshootereditor.domain.common.Diffable
 import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
+import com.github.attacktive.troubleshootereditor.domain.common.Properties
+import com.github.attacktive.troubleshootereditor.domain.common.Property
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+fun Iterable<Property>.toProperties() = Properties(toMutableList())
 
 inline infix fun <reified E : Enum<E>, V> ((E) -> V).findBy(value: V): E {
 	return findBy(value) { IllegalArgumentException("No enum constant ${javaClass.canonicalName}.$value.") }
