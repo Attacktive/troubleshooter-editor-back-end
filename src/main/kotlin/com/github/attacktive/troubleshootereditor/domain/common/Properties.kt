@@ -3,6 +3,8 @@ package com.github.attacktive.troubleshootereditor.domain.common
 import java.util.function.Predicate
 
 data class Properties(private val list: MutableList<Property> = mutableListOf()) {
+	constructor(map: Map<String, String>): this(map.map { Property(it.toPair()) }.toMutableList())
+
 	fun containsKey(key: String) = keys().contains(key)
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
 

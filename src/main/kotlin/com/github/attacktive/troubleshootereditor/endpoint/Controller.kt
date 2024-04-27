@@ -1,6 +1,7 @@
 package com.github.attacktive.troubleshootereditor.endpoint
 
 import java.io.File
+import com.github.attacktive.troubleshootereditor.domain.common.InboundSaveData
 import com.github.attacktive.troubleshootereditor.domain.common.SaveData
 import com.github.attacktive.troubleshootereditor.file.UploadService
 import com.github.attacktive.troubleshootereditor.sqlite.SqliteService
@@ -24,9 +25,9 @@ class Controller(private val uploadService: UploadService, private val sqliteSer
 	}
 
 	@PostMapping(value = ["/save"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-	fun save(@RequestPart("file") multipartFile: MultipartFile, @RequestPart("edited") edited: SaveData): ResponseEntity<ByteArray> {
+	fun save(@RequestPart("file") multipartFile: MultipartFile, @RequestPart("edited") inboundSaveData: InboundSaveData): ResponseEntity<ByteArray> {
 		val savedFileName = uploadService.saveFile(multipartFile)
-		val editedFileAbsolutePath = sqliteService.save(savedFileName, edited)
+		val editedFileAbsolutePath = sqliteService.save(savedFileName, inboundSaveData)
 		val fileInBytes = File(editedFileAbsolutePath).readBytes()
 
 		uploadService.deleteFile(savedFileName)

@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.sqlite
 
 import java.io.File
 import java.sql.DriverManager
+import com.github.attacktive.troubleshootereditor.domain.common.InboundSaveData
 import com.github.attacktive.troubleshootereditor.domain.common.SaveData
 import com.github.attacktive.troubleshootereditor.domain.company.CompanyObject
 import com.github.attacktive.troubleshootereditor.domain.item.ItemObject
@@ -22,8 +23,9 @@ class SqliteService {
 
 	fun read(file: File): SaveData {
 		val url = file.getJdbcUrl()
+		val company = CompanyObject.selectCompany(url)
+
 		DriverManager.getConnection(url).use {
-			val company = CompanyObject.selectCompany(it)
 			val items = ItemObject.selectItems(it)
 			val rosters = RosterObject.selectRosters(it)
 
@@ -31,15 +33,15 @@ class SqliteService {
 		}
 	}
 
-	fun save(fileName: String, edited: SaveData): String {
+	fun save(fileName: String, inboundSaveData: InboundSaveData): String {
 		val file = File(tmpdir, fileName)
 		val url = file.getJdbcUrl()
-		DriverManager.getConnection(url).use { connection ->
-			val companyDiffResult = CompanyObject.selectAndDiff(connection, edited.company)
-			companyDiffResult.generateStatements(connection).forEach { it.executeUpdate() }
 
-			val itemDiffResult = ItemObject.selectAndDiff(connection, edited.items)
-			val rosterDiffResult = RosterObject.selectAndDiff(connection, edited.rosters)
+		CompanyObject.saveChanges(url, inboundSaveData.company.toCompany())
+
+		DriverManager.getConnection(url).use { connection ->
+			val itemDiffResult = ItemObject.selectAndDiff(connection, inboundSaveData.items)
+			val rosterDiffResult = RosterObject.selectAndDiff(connection, inboundSaveData.rosters)
 
 			(itemDiffResult + rosterDiffResult).asSequence()
 				.flatMap { it.generateStatements(connection) }
