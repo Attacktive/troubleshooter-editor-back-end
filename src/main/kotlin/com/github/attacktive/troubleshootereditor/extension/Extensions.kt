@@ -22,6 +22,10 @@ inline fun <reified E : Enum<E>, V> ((E) -> V).findBy(value: V, throwableSupplie
 	return enumValues<E>().firstOrNull { this(it) == value } ?: throw throwableSupplier.get()
 }
 
+inline infix fun <reified E : Enum<E>, V> ((E) -> V).findByOrNull(value: V): E? {
+	return enumValues<E>().firstOrNull { this(it) == value }
+}
+
 fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
 fun String.deserializeAsStringToStringMap(): Map<String, String> {
@@ -36,7 +40,7 @@ fun <I, T: Diffable<T, I, D>, D> Collection<T>.getDiffResults(those: Collection<
 		.mapNotNull { oldItem ->
 			val newItem = those.findById(oldItem.getId())
 			if (newItem == null) {
-				// no plan to addition nor deletion
+				// no plan for addition nor deletion yet
 				null
 			} else {
 				oldItem.diff(newItem)

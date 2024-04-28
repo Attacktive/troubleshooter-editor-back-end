@@ -2,52 +2,15 @@ package com.github.attacktive.troubleshootereditor.domain.item
 
 import java.sql.Connection
 import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
+import com.fasterxml.jackson.annotation.JsonGetter
 import com.github.attacktive.troubleshootereditor.domain.common.Diffable
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
-import com.github.attacktive.troubleshootereditor.domain.common.PropertiesAware
 import com.github.attacktive.troubleshootereditor.domain.common.PropertiesDiffAware
-import com.github.attacktive.troubleshootereditor.extension.deserializeAsStringToStringMap
-import com.github.attacktive.troubleshootereditor.extension.findBy
 
-data class Item(val id: Long, val type: String, val count: Long, val status: String, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult>, PropertiesAware {
-	constructor(id: Long, type: String, count: Long, status: String, propertiesJson: String, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, equipmentPosition) {
-		addProperties(propertiesJson.deserializeAsStringToStringMap())
-	}
-
-	override val properties: Properties = Properties()
+data class Item(val id: Long, val type: String, val count: Long, val status: String, val properties: Properties, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult> {
+	constructor(id: Long, type: String, count: Long, status: String, properties: Map<String, String>, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, Properties(properties), equipmentPosition)
 
 	override fun getId() = id
-
-	companion object {
-		fun fromResultSet(resultSet: ResultSet): List<Item> {
-			val items: MutableList<Item> = mutableListOf()
-
-			while (resultSet.next()) {
-				val id = resultSet.getLong("itemID")
-				val type = resultSet.getString("itemType")
-				val count = resultSet.getLong("itemCount")
-				val status = resultSet.getString("masterName")
-				val properties = resultSet.getString("properties")
-
-				var equipmentPosition: EquipmentPosition? = null
-				try {
-					val positionKey = resultSet.getString("positionKey")
-					equipmentPosition = EquipmentPosition::value findBy positionKey
-				} catch (sqlException: SQLException) {
-					val isExpectedException = Regex(".*no such column.*", RegexOption.IGNORE_CASE).matches(sqlException.message ?: "")
-					if (!isExpectedException) {
-						throw sqlException
-					}
-				}
-
-				items.add(Item(id, type, count, status, properties, equipmentPosition))
-			}
-
-			return items
-		}
-	}
 
 	override fun diff(that: Item): DiffResult {
 		val type = that.type.takeUnless { type == that.type }
@@ -57,6 +20,9 @@ data class Item(val id: Long, val type: String, val count: Long, val status: Str
 
 		return DiffResult(id, type, count, status, properties)
 	}
+
+	@JsonGetter(value = "properties")
+	fun properties() = properties.toMap().toSortedMap()
 
 	fun isGear(): Boolean {
 		if (properties.containsKey("Binded") || properties.containsKey("Lv") || properties.containsKey("Transmog")) {
