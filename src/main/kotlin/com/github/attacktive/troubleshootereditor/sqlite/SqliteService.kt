@@ -24,9 +24,9 @@ class SqliteService {
 	fun read(file: File): SaveData {
 		val url = file.getJdbcUrl()
 		val company = CompanyObject.selectCompany(url)
+		val items = ItemObject.selectItems(url)
 
 		DriverManager.getConnection(url).use {
-			val items = ItemObject.selectItems(it)
 			val rosters = RosterObject.selectRosters(it)
 
 			return SaveData(company, rosters, items)
@@ -38,12 +38,12 @@ class SqliteService {
 		val url = file.getJdbcUrl()
 
 		CompanyObject.saveChanges(url, inboundSaveData.company.toCompany())
+		ItemObject.saveChanges(url, inboundSaveData.items.map { it.toItem() })
 
 		DriverManager.getConnection(url).use { connection ->
-			val itemDiffResult = ItemObject.selectAndDiff(connection, inboundSaveData.items)
 			val rosterDiffResult = RosterObject.selectAndDiff(connection, inboundSaveData.rosters)
 
-			(itemDiffResult + rosterDiffResult).asSequence()
+			rosterDiffResult.asSequence()
 				.flatMap { it.generateStatements(connection) }
 				.forEach { it.executeUpdate() }
 		}
@@ -54,11 +54,12 @@ class SqliteService {
 	fun applyQuickCheats(fileName: String): String {
 		val file = File(tmpdir, fileName)
 		val url = file.getJdbcUrl()
-		DriverManager.getConnection(url).use { connection ->
-			val equippedItemsByPosition = ItemObject.selectEquippedItems(connection)
-				.filterNot { it.equipmentPosition == null }
-				.groupBy { it.equipmentPosition }
 
+		val equippedItemsByPosition = ItemObject.selectEquippedItems(url)
+			.filterNot { it.equipmentPosition == null }
+			.groupBy { it.equipmentPosition }
+
+		DriverManager.getConnection(url).use { connection ->
 			ItemObject.overwriteProperties(connection, equippedItemsByPosition)
 		}
 
