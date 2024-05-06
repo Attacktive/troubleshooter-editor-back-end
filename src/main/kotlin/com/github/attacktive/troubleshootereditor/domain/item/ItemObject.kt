@@ -87,21 +87,8 @@ object ItemObject {
 		val oldItems = selectItems(url)
 		val diffResult = oldItems.getDiffResults(newItems)
 
-		val itemStatusMasterLookup = transaction {
-			addLogger(StdOutSqlLogger)
-
-			ItemStatusMaster.select(ItemStatusMaster.index, ItemStatusMaster.name)
-				.map { it[ItemStatusMaster.name] to it[ItemStatusMaster.index] }
-				.toMap()
-		}
-
-		val itemPropertyMasterLookup = transaction {
-			addLogger(StdOutSqlLogger)
-
-			ItemPropertyMaster.select(ItemPropertyMaster.index, ItemPropertyMaster.name)
-				.map { it[ItemPropertyMaster.name] to it[ItemPropertyMaster.index] }
-				.toMap()
-		}
+		val itemStatusMasterLookup = getTtemStatusMasterLookup()
+		val itemPropertyMasterLookup = getItemPropertyMasterLookup()
 
 		transaction {
 			addLogger(StdOutSqlLogger)
@@ -140,22 +127,16 @@ object ItemObject {
 							} else {
 								when (property.diffType) {
 									DiffType.NONE -> {}
-									DiffType.ADDED -> {
-										ItemProperties.insert {
-											it[itemId] = itemDiff.id
-											it[masterIndex] = propertyIndex
-											it[value] = property.value
-										}
+									DiffType.ADDED -> ItemProperties.insert {
+										it[itemId] = itemDiff.id
+										it[masterIndex] = propertyIndex
+										it[value] = property.value
 									}
-									DiffType.MODIFIED -> {
-										ItemProperties.update({ (ItemProperties.itemId eq itemDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
-											it[value] = property.value
-										}
+									DiffType.MODIFIED -> ItemProperties.update({ (ItemProperties.itemId eq itemDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
+										it[value] = property.value
 									}
-									DiffType.REMOVED -> {
-										ItemProperties.deleteWhere {
-											(itemId eq itemDiff.id) and (masterIndex eq propertyIndex)
-										}
+									DiffType.REMOVED -> ItemProperties.deleteWhere {
+										(itemId eq itemDiff.id) and (masterIndex eq propertyIndex)
 									}
 								}
 							}
@@ -177,5 +158,21 @@ object ItemObject {
 			.flatten()
 			.onEach { statement -> logger.debug(statement.toString()) }
 			.forEach { statement -> statement.executeUpdate() }
+	}
+
+	private fun getTtemStatusMasterLookup() = transaction {
+		addLogger(StdOutSqlLogger)
+
+		ItemStatusMaster.select(ItemStatusMaster.index, ItemStatusMaster.name)
+			.map { it[ItemStatusMaster.name] to it[ItemStatusMaster.index] }
+			.toMap()
+	}
+
+	private fun getItemPropertyMasterLookup() = transaction {
+		addLogger(StdOutSqlLogger)
+
+		ItemPropertyMaster.select(ItemPropertyMaster.index, ItemPropertyMaster.name)
+			.map { it[ItemPropertyMaster.name] to it[ItemPropertyMaster.index] }
+			.toMap()
 	}
 }

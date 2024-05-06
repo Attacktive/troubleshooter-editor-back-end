@@ -49,13 +49,7 @@ object CompanyObject {
 		val oldCompany = selectCompany(url)
 		val diffResult = oldCompany.diff(newCompany)
 
-		val companyMasterLookup = transaction {
-			addLogger(StdOutSqlLogger)
-
-			CompanyPropertyMaster.select(CompanyPropertyMaster.masterIndex, CompanyPropertyMaster.masterName)
-				.map { it[CompanyPropertyMaster.masterName] to it[CompanyPropertyMaster.masterIndex] }
-				.toMap()
-		}
+		val companyMasterLookup = getCompanyMasterLookup()
 
 		transaction {
 			addLogger(StdOutSqlLogger)
@@ -81,26 +75,28 @@ object CompanyObject {
 					} else {
 						when (property.diffType) {
 							DiffType.NONE -> {}
-							DiffType.ADDED -> {
-								CompanyProperties.insert {
-									it[companyId] = diffResult.id
-									it[masterIndex] = propertyIndex
-									it[cpValue] = property.value
-								}
+							DiffType.ADDED -> CompanyProperties.insert {
+								it[companyId] = diffResult.id
+								it[masterIndex] = propertyIndex
+								it[cpValue] = property.value
 							}
-							DiffType.MODIFIED -> {
-								CompanyProperties.update({ (CompanyProperties.companyId eq diffResult.id) and (CompanyProperties.masterIndex eq propertyIndex) }) {
-									it[cpValue] = property.value
-								}
+							DiffType.MODIFIED -> CompanyProperties.update({ (CompanyProperties.companyId eq diffResult.id) and (CompanyProperties.masterIndex eq propertyIndex) }) {
+								it[cpValue] = property.value
 							}
-							DiffType.REMOVED -> {
-								CompanyProperties.deleteWhere {
-									(companyId eq diffResult.id) and (masterIndex eq propertyIndex)
-								}
+							DiffType.REMOVED -> CompanyProperties.deleteWhere {
+								(companyId eq diffResult.id) and (masterIndex eq propertyIndex)
 							}
 						}
 					}
 				}
 		}
+	}
+
+	private fun getCompanyMasterLookup() = transaction {
+		addLogger(StdOutSqlLogger)
+
+		CompanyPropertyMaster.select(CompanyPropertyMaster.masterIndex, CompanyPropertyMaster.masterName)
+			.map { it[CompanyPropertyMaster.masterName] to it[CompanyPropertyMaster.masterIndex] }
+			.toMap()
 	}
 }
