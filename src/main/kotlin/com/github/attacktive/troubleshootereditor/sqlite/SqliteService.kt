@@ -59,9 +59,7 @@ class SqliteService {
 			.filterNot { it.equipmentPosition == null }
 			.groupBy { it.equipmentPosition }
 
-		DriverManager.getConnection(url).use { connection ->
-			ItemObject.overwriteProperties(connection, equippedItemsByPosition)
-		}
+		ItemObject.overwriteProperties(url, equippedItemsByPosition)
 
 		return file.absolutePath
 	}
