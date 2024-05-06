@@ -87,7 +87,7 @@ object ItemObject {
 		val oldItems = selectItems(url)
 		val diffResult = oldItems.getDiffResults(newItems)
 
-		val itemStatusMasterLookup = getTtemStatusMasterLookup()
+		val itemStatusMasterLookup = getItemStatusMasterLookup()
 		val itemPropertyMasterLookup = getItemPropertyMasterLookup()
 
 		transaction {
@@ -160,7 +160,7 @@ object ItemObject {
 			.forEach { statement -> statement.executeUpdate() }
 	}
 
-	private fun getTtemStatusMasterLookup() = transaction {
+	private fun getItemStatusMasterLookup() = transaction {
 		addLogger(StdOutSqlLogger)
 
 		ItemStatusMaster.select(ItemStatusMaster.index, ItemStatusMaster.name)
