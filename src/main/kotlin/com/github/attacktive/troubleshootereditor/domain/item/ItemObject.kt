@@ -1,6 +1,5 @@
 package com.github.attacktive.troubleshootereditor.domain.item
 
-import java.sql.Connection
 import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Property
 import com.github.attacktive.troubleshootereditor.domain.item.table.ItemEquippedInfos
@@ -147,19 +146,49 @@ object ItemObject {
 		}
 	}
 
-	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
-		itemsPerPosition
-			.map {
-				val position = it.key!!
-				val items = it.value
+	fun overwriteProperties(url: String, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
+		Database.connect(url)
 
-				val cheatingFunction = position.cheatingStatements(connection)
+		itemsPerPosition.forEach {
+			val position = it.key
+			val items = it.value
 
-				items.map { item -> cheatingFunction(item.id) }.flatten()
+			if (position == null) {
+				logger.warn("An item whose position is ${null} is found.")
+			} else {
+				val options = position.options
+
+				if (options != null) {
+					if (options.size > 5) {
+						logger.warn("You can have up to 5 options! Other than the first five are going to be silently ignored.")
+					}
+
+					transaction {
+						addLogger(StdOutSqlLogger)
+
+						items.forEach { item ->
+							ItemProperties.applyDefaultChanges(item.id)
+
+							options.mapIndexed { index, pair ->
+								val nthOptions = PropertyMaster.getNthOptions(index + 1)
+
+								ItemProperties.insert {
+									it[itemId] = item.id
+									it[masterIndex] = nthOptions.first.index
+									it[value] = pair.first.value
+								}
+
+								ItemProperties.insert {
+									it[itemId] = item.id
+									it[masterIndex] = nthOptions.second.index
+									it[value] = pair.second.toString()
+								}
+							}
+						}
+					}
+				}
 			}
-			.flatten()
-			.onEach { statement -> logger.debug(statement.toString()) }
-			.forEach { statement -> statement.executeUpdate() }
+		}
 	}
 
 	private fun getItemStatusMasterLookup() = transaction {
