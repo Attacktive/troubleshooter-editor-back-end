@@ -147,10 +147,6 @@ object ItemObject {
 		}
 	}
 
-	fun overwriteProperties(url: String, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
-
-	}
-
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
 		itemsPerPosition
 			.map {
