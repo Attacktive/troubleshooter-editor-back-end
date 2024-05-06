@@ -84,6 +84,8 @@ object ItemObject {
 	}
 
 	fun saveChanges(url: String, newItems: Collection<Item>) {
+		Database.connect(url)
+
 		val oldItems = selectItems(url)
 		val diffResult = oldItems.getDiffResults(newItems)
 
@@ -143,6 +145,10 @@ object ItemObject {
 						}
 				}
 		}
+	}
+
+	fun overwriteProperties(url: String, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
+
 	}
 
 	fun overwriteProperties(connection: Connection, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
