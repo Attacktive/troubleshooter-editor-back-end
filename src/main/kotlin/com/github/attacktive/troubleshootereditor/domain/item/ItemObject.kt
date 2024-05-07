@@ -157,7 +157,6 @@ object ItemObject {
 				logger.warn("An item whose position is ${null} is found.")
 			} else {
 				val options = position.options
-
 				if (options != null) {
 					if (options.size > 5) {
 						logger.warn("You can have up to 5 options! Other than the first five are going to be silently ignored.")
@@ -172,17 +171,8 @@ object ItemObject {
 							options.mapIndexed { index, pair ->
 								val nthOptions = PropertyMaster.getNthOptions(index + 1)
 
-								ItemProperties.insert {
-									it[itemId] = item.id
-									it[masterIndex] = nthOptions.first.index
-									it[value] = pair.first.value
-								}
-
-								ItemProperties.insert {
-									it[itemId] = item.id
-									it[masterIndex] = nthOptions.second.index
-									it[value] = pair.second.toString()
-								}
+								ItemProperties.insert(item.id, nthOptions.first, pair.first.value)
+								ItemProperties.insert(item.id, nthOptions.second, pair.second)
 							}
 						}
 					}
