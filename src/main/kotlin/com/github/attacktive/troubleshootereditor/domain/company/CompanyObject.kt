@@ -96,7 +96,6 @@ object CompanyObject {
 		addLogger(StdOutSqlLogger)
 
 		CompanyPropertyMaster.select(CompanyPropertyMaster.masterIndex, CompanyPropertyMaster.masterName)
-			.map { it[CompanyPropertyMaster.masterName] to it[CompanyPropertyMaster.masterIndex] }
-			.toMap()
+			.associate { it[CompanyPropertyMaster.masterName] to it[CompanyPropertyMaster.masterIndex] }
 	}
 }
