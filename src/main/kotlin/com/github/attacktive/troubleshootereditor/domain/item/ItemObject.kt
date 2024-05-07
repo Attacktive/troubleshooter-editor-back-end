@@ -36,7 +36,6 @@ object ItemObject {
 					(Items.status eq ItemStatusMaster.index) and (Items.id eq ItemProperties.itemId) and (ItemProperties.masterIndex eq ItemPropertyMaster.index)
 				}
 				.orderBy(Items.id)
-				.asSequence()
 				.groupBy { it[Items.id] }
 				.values
 				.map { resultRows ->
@@ -63,7 +62,6 @@ object ItemObject {
 					(Items.id eq ItemEquippedInfos.itemId) and (Items.status eq ItemStatusMaster.index) and (Items.id eq ItemProperties.itemId) and (ItemProperties.masterIndex eq ItemPropertyMaster.index)
 				}
 				.orderBy(Items.id)
-				.asSequence()
 				.groupBy { it[Items.id] }
 				.values
 				.map { resultRows ->
