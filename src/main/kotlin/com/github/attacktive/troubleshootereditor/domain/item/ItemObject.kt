@@ -183,15 +183,13 @@ object ItemObject {
 		addLogger(StdOutSqlLogger)
 
 		ItemStatusMaster.select(ItemStatusMaster.index, ItemStatusMaster.name)
-			.map { it[ItemStatusMaster.name] to it[ItemStatusMaster.index] }
-			.toMap()
+			.associate { it[ItemStatusMaster.name] to it[ItemStatusMaster.index] }
 	}
 
 	private fun getItemPropertyMasterLookup() = transaction {
 		addLogger(StdOutSqlLogger)
 
 		ItemPropertyMaster.select(ItemPropertyMaster.index, ItemPropertyMaster.name)
-			.map { it[ItemPropertyMaster.name] to it[ItemPropertyMaster.index] }
-			.toMap()
+			.associate { it[ItemPropertyMaster.name] to it[ItemPropertyMaster.index] }
 	}
 }
