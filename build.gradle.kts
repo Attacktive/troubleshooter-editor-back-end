@@ -7,7 +7,7 @@ java.sourceCompatibility = JavaVersion.VERSION_21
 val exposedVersion = "0.49.0"
 
 plugins {
-	val kotlinPluginVersion = "1.9.23"
+	val kotlinPluginVersion = "1.9.24"
 
 	id("org.springframework.boot") version "3.2.5"
 	id("io.spring.dependency-management") version "1.1.5"
