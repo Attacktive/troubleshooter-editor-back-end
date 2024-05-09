@@ -92,54 +92,53 @@ object ItemObject {
 		transaction {
 			addLogger(StdOutSqlLogger)
 
-			diffResult.asSequence()
-				.forEach { itemDiff ->
-					if (itemDiff.type != null) {
+			diffResult.forEach { itemDiff ->
+				if (itemDiff.type != null) {
+					Items.update({ Items.id eq itemDiff.id }) {
+						it[type] = itemDiff.type
+					}
+				}
+
+				if (itemDiff.count != null) {
+					Items.update({ Items.id eq itemDiff.id }) {
+						it[count] = itemDiff.count
+					}
+				}
+
+				if (itemDiff.status != null) {
+					val statusIndex = itemStatusMasterLookup[itemDiff.status]
+					if (statusIndex == null) {
+						logger.warn("Failed to find item status master index for \"${itemDiff.status}\"; ignoring. 😞")
+					} else {
 						Items.update({ Items.id eq itemDiff.id }) {
-							it[type] = itemDiff.type
+							it[status] = statusIndex
 						}
 					}
+				}
 
-					if (itemDiff.count != null) {
-						Items.update({ Items.id eq itemDiff.id }) {
-							it[count] = itemDiff.count
-						}
-					}
-
-					if (itemDiff.status != null) {
-						val statusIndex = itemStatusMasterLookup[itemDiff.status]
-						if (statusIndex == null) {
-							logger.warn("Failed to find item status master index for \"${itemDiff.status}\"; ignoring. 😞")
+				itemDiff.properties
+					.asSequence()
+					.forEach { property ->
+						val propertyIndex = itemPropertyMasterLookup[property.key]
+						if (propertyIndex == null) {
+							logger.warn("Failed to find item property master index for \"${property.key}\"; ignoring. 😞")
 						} else {
-							Items.update({ Items.id eq itemDiff.id }) {
-								it[status] = statusIndex
-							}
-						}
-					}
-
-					itemDiff.properties
-						.asSequence()
-						.forEach { property ->
-							val propertyIndex = itemPropertyMasterLookup[property.key]
-							if (propertyIndex == null) {
-								logger.warn("Failed to find item property master index for \"${property.key}\"; ignoring. 😞")
-							} else {
-								when (property.diffType) {
-									DiffType.NONE -> {}
-									DiffType.ADDED -> ItemProperties.insert {
-										it[itemId] = itemDiff.id
-										it[masterIndex] = propertyIndex
-										it[value] = property.value
-									}
-									DiffType.MODIFIED -> ItemProperties.update({ (ItemProperties.itemId eq itemDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
-										it[value] = property.value
-									}
-									DiffType.REMOVED -> ItemProperties.deleteWhere {
-										(itemId eq itemDiff.id) and (masterIndex eq propertyIndex)
-									}
+							when (property.diffType) {
+								DiffType.NONE -> {}
+								DiffType.ADDED -> ItemProperties.insert {
+									it[itemId] = itemDiff.id
+									it[masterIndex] = propertyIndex
+									it[value] = property.value
+								}
+								DiffType.MODIFIED -> ItemProperties.update({ (ItemProperties.itemId eq itemDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
+									it[value] = property.value
+								}
+								DiffType.REMOVED -> ItemProperties.deleteWhere {
+									(itemId eq itemDiff.id) and (masterIndex eq propertyIndex)
 								}
 							}
 						}
+					}
 				}
 		}
 	}
