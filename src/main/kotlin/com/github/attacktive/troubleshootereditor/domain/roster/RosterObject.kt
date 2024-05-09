@@ -1,39 +1,120 @@
 package com.github.attacktive.troubleshootereditor.domain.roster
 
-import java.sql.Connection
-import java.sql.PreparedStatement
+import com.github.attacktive.troubleshootereditor.domain.common.DiffType
+import com.github.attacktive.troubleshootereditor.domain.common.Property
+import com.github.attacktive.troubleshootereditor.domain.item.table.ItemProperties
+import com.github.attacktive.troubleshootereditor.domain.roster.table.RosterProperties
+import com.github.attacktive.troubleshootereditor.domain.roster.table.RosterPropertyMaster
+import com.github.attacktive.troubleshootereditor.domain.roster.table.Rosters
 import com.github.attacktive.troubleshootereditor.extension.getDiffResults
+import com.github.attacktive.troubleshootereditor.extension.logger
+import com.github.attacktive.troubleshootereditor.extension.toProperties
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 object RosterObject {
-	fun selectRosters(connection: Connection): List<Roster> {
-		val statement = connection.prepareStatement(
-			"""
-				select
-					r.rosterID,
-					r.rosterName,
-					r.rosterClass,
-					r.rosterLv,
-					r.rosterExp,
-					iif(rpm.masterIndex is null, '{}', json_group_object(rpm.masterName, rp.rpValue)) as properties
-				from roster r
-					left join rosterProperty rp on r.rosterID = rp.rosterID
-					left join rosterPropertyMaster rpm on rp.masterIndex = rpm.masterIndex
-				group by r.rosterID,r.rosterName,r.rosterClass,r.rosterLv,r.rosterExp
-				order by r.rosterID
-			""".trimIndent()
-		)
+	private val logger by logger()
 
-		return getItemsFromStatement(statement)
-	}
+	fun selectRosters(url: String): List<Roster> {
+		Database.connect(url)
 
-	fun selectAndDiff(connection: Connection, newRosters: Collection<Roster>): List<Roster.DiffResult> {
-		val oldRosters = selectRosters(connection)
-		return oldRosters.getDiffResults(newRosters)
-	}
+		return transaction {
+			addLogger(StdOutSqlLogger)
 
-	private fun getItemsFromStatement(statement: PreparedStatement): List<Roster> {
-		statement.executeQuery().use {
-			return Roster.fromResultSet(it)
+			(Rosters leftJoin RosterProperties leftJoin RosterPropertyMaster)
+				.select(Rosters.id, Rosters.name, Rosters.`class`, Rosters.level, Rosters.exp, RosterPropertyMaster.name, RosterProperties.value)
+				.where {
+					(Rosters.id eq RosterProperties.rosterId) and (RosterProperties.masterIndex eq RosterPropertyMaster.index)
+				}
+				.orderBy(Rosters.id)
+				.groupBy { it[Rosters.id] }
+				.values
+				.map { resultRows ->
+					val properties = resultRows.map { resultRow -> resultRow[RosterPropertyMaster.name] to resultRow[RosterProperties.value] }
+						.map { Property(it) }
+						.toMutableList()
+						.toProperties()
+
+					val resultRow = resultRows[0]
+					Roster(resultRow[Rosters.id], resultRow[Rosters.name], resultRow[Rosters.`class`], resultRow[Rosters.level], resultRow[Rosters.exp], properties)
+				}
 		}
+	}
+
+	fun saveChanges(url: String, newRosters: Collection<Roster>) {
+		Database.connect(url)
+
+		val oldRosters = selectRosters(url)
+		val diffResult = oldRosters.getDiffResults(newRosters)
+
+		val rosterPropertyMasterLookup = getRosterPropertyMasterLookup()
+
+		transaction {
+			addLogger(StdOutSqlLogger)
+
+			diffResult.forEach { rosterDiff ->
+				if (rosterDiff.name != null) {
+					Rosters.update({ Rosters.id eq rosterDiff.id }) {
+						it[name] = rosterDiff.name
+					}
+				}
+
+				if (rosterDiff.`class` != null) {
+					Rosters.update({ Rosters.id eq rosterDiff.id }) {
+						it[`class`] = rosterDiff.`class`
+					}
+				}
+
+				if (rosterDiff.level != null) {
+					Rosters.update({ Rosters.id eq rosterDiff.id }) {
+						it[level] = rosterDiff.level
+					}
+				}
+
+				if (rosterDiff.exp != null) {
+					Rosters.update({ Rosters.id eq rosterDiff.id }) {
+						it[exp] = rosterDiff.exp
+					}
+				}
+
+				rosterDiff.properties
+					.asSequence()
+					.forEach { property ->
+						val propertyIndex = rosterPropertyMasterLookup[property.key]
+						if (propertyIndex == null) {
+							logger.warn("Failed to find roster property master index for \"${property.key}\"; ignoring. 😞")
+						} else {
+							when (property.diffType) {
+								DiffType.NONE -> {}
+								DiffType.ADDED -> ItemProperties.insert {
+									it[itemId] = rosterDiff.id
+									it[masterIndex] = propertyIndex
+									it[value] = property.value
+								}
+								DiffType.MODIFIED -> ItemProperties.update({ (ItemProperties.itemId eq rosterDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
+									it[value] = property.value
+								}
+								DiffType.REMOVED -> ItemProperties.deleteWhere {
+									(itemId eq rosterDiff.id) and (masterIndex eq propertyIndex)
+								}
+							}
+						}
+					}
+			}
+		}
+	}
+
+	private fun getRosterPropertyMasterLookup() = transaction {
+		addLogger(StdOutSqlLogger)
+
+		RosterPropertyMaster.select(RosterPropertyMaster.index, RosterPropertyMaster.name)
+			.associate { it[RosterPropertyMaster.name] to it[RosterPropertyMaster.index] }
 	}
 }

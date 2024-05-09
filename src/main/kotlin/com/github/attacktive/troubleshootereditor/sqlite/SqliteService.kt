@@ -1,7 +1,6 @@
 package com.github.attacktive.troubleshootereditor.sqlite
 
 import java.io.File
-import java.sql.DriverManager
 import com.github.attacktive.troubleshootereditor.domain.common.InboundSaveData
 import com.github.attacktive.troubleshootereditor.domain.common.SaveData
 import com.github.attacktive.troubleshootereditor.domain.company.CompanyObject
@@ -25,12 +24,9 @@ class SqliteService {
 		val url = file.getJdbcUrl()
 		val company = CompanyObject.selectCompany(url)
 		val items = ItemObject.selectItems(url)
+		val rosters = RosterObject.selectRosters(url)
 
-		DriverManager.getConnection(url).use {
-			val rosters = RosterObject.selectRosters(it)
-
-			return SaveData(company, rosters, items)
-		}
+		return SaveData(company, rosters, items)
 	}
 
 	fun save(fileName: String, inboundSaveData: InboundSaveData): String {
@@ -39,14 +35,7 @@ class SqliteService {
 
 		CompanyObject.saveChanges(url, inboundSaveData.company.toCompany())
 		ItemObject.saveChanges(url, inboundSaveData.items.map { it.toItem() })
-
-		DriverManager.getConnection(url).use { connection ->
-			val rosterDiffResult = RosterObject.selectAndDiff(connection, inboundSaveData.rosters)
-
-			rosterDiffResult.asSequence()
-				.flatMap { it.generateStatements(connection) }
-				.forEach { it.executeUpdate() }
-		}
+		RosterObject.saveChanges(url, inboundSaveData.rosters.map { it.toRoster() })
 
 		return file.absolutePath
 	}
