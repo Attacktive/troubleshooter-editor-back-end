@@ -85,7 +85,6 @@ object RosterObject {
 				}
 
 				rosterDiff.properties
-					.asSequence()
 					.forEach { property ->
 						val propertyIndex = rosterPropertyMasterLookup[property.key]
 						if (propertyIndex == null) {

@@ -9,7 +9,7 @@ data class Properties(private val list: MutableList<Property> = mutableListOf())
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
 
 	fun add(pair: Pair<String, String>) = list.addLast(Property(pair))
-	fun asSequence() = list.asSequence()
+	fun forEach(action: (Property) -> Unit) = list.forEach(action)
 	fun toMap() = list.associate { it.key to it.value }
 
 	fun diff(those: Properties): Properties {

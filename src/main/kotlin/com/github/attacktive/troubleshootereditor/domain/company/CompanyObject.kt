@@ -67,7 +67,6 @@ object CompanyObject {
 			}
 
 			diffResult.properties
-				.asSequence()
 				.forEach { property ->
 					val propertyIndex = companyMasterLookup[property.key]
 					if (propertyIndex == null) {
