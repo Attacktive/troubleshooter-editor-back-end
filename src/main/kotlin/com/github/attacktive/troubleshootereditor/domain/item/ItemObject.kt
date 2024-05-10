@@ -117,7 +117,6 @@ object ItemObject {
 				}
 
 				itemDiff.properties
-					.asSequence()
 					.forEach { property ->
 						val propertyIndex = itemPropertyMasterLookup[property.key]
 						if (propertyIndex == null) {
