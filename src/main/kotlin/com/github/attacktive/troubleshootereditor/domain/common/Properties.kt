@@ -2,13 +2,12 @@ package com.github.attacktive.troubleshootereditor.domain.common
 
 import java.util.function.Predicate
 
-data class Properties(private val list: MutableList<Property> = mutableListOf()) {
+data class Properties(private val list: List<Property> = mutableListOf()) {
 	constructor(map: Map<String, String>): this(map.map { Property(it.toPair()) }.toMutableList())
 
 	fun containsKey(key: String) = keys().contains(key)
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
 
-	fun add(pair: Pair<String, String>) = list.addLast(Property(pair))
 	fun forEach(action: (Property) -> Unit) = list.forEach(action)
 	fun toMap() = list.associate { it.key to it.value }
 
