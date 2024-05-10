@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.github.attacktive"
-version = "1.2.0"
+version = "1.2.2"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 val exposedVersion = "0.50.0"
