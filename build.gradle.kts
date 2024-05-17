@@ -4,7 +4,7 @@ group = "com.github.attacktive"
 version = "1.2.3"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
-val exposedVersion = "0.50.0"
+val exposedVersion = "0.50.1"
 
 plugins {
 	val kotlinPluginVersion = "1.9.24"
