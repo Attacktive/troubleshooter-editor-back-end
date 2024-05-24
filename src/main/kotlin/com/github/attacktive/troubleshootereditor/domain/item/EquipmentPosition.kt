@@ -1,5 +1,6 @@
 package com.github.attacktive.troubleshootereditor.domain.item
 
+@Suppress("unused")
 enum class EquipmentPosition(val value: String, val options: List<Pair<ItemOption, Int>>?) {
 	WEAPON("Weapon", ItemOption.forWeapons),
 	BODY("Body", ItemOption.forBodies),
