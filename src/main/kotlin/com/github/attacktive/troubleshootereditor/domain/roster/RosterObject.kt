@@ -1,8 +1,6 @@
 package com.github.attacktive.troubleshootereditor.domain.roster
 
-import com.github.attacktive.troubleshootereditor.domain.common.DiffType
 import com.github.attacktive.troubleshootereditor.domain.common.Property
-import com.github.attacktive.troubleshootereditor.domain.item.table.ItemProperties
 import com.github.attacktive.troubleshootereditor.domain.roster.table.RosterProperties
 import com.github.attacktive.troubleshootereditor.domain.roster.table.RosterPropertyMaster
 import com.github.attacktive.troubleshootereditor.domain.roster.table.Rosters
@@ -10,12 +8,9 @@ import com.github.attacktive.troubleshootereditor.extension.getDiffResults
 import com.github.attacktive.troubleshootereditor.extension.logger
 import com.github.attacktive.troubleshootereditor.extension.toProperties
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
@@ -84,28 +79,7 @@ object RosterObject {
 					}
 				}
 
-				rosterDiff.properties
-					.forEach { property ->
-						val propertyIndex = rosterPropertyMasterLookup[property.key]
-						if (propertyIndex == null) {
-							logger.warn("Failed to find roster property master index for \"${property.key}\"; ignoring. 😞")
-						} else {
-							when (property.diffType) {
-								DiffType.NONE -> {}
-								DiffType.ADDED -> ItemProperties.insert {
-									it[itemId] = rosterDiff.id
-									it[masterIndex] = propertyIndex
-									it[value] = property.value
-								}
-								DiffType.MODIFIED -> ItemProperties.update({ (ItemProperties.itemId eq rosterDiff.id) and (ItemProperties.masterIndex eq propertyIndex) }) {
-									it[value] = property.value
-								}
-								DiffType.REMOVED -> ItemProperties.deleteWhere {
-									(itemId eq rosterDiff.id) and (masterIndex eq propertyIndex)
-								}
-							}
-						}
-					}
+				rosterDiff.properties.applyPropertyChanges(rosterDiff, rosterPropertyMasterLookup)
 			}
 		}
 	}
