@@ -11,7 +11,6 @@ open class Properties(private val list: List<Property> = mutableListOf()) {
 	fun containsKey(key: String) = keys().contains(key)
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
 
-	fun forEach(action: (Property) -> Unit) = list.forEach(action)
 	fun toMap() = list.associate { it.key to it.value }
 
 	fun diff(those: Properties): Properties {
@@ -45,7 +44,7 @@ open class Properties(private val list: List<Property> = mutableListOf()) {
 	}
 
 	fun <T> applyPropertyChanges(diffResult: IDiffResult<T>, propertyMasterLookup: Map<String, Int>) {
-		forEach { property ->
+		for (property in list) {
 			val propertyIndex = propertyMasterLookup[property.key]
 			if (propertyIndex == null) {
 				logger.warn("Failed to find item property master index for \"${property.key}\"; ignoring. 😞")
