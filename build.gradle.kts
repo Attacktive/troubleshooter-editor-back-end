@@ -4,8 +4,6 @@ group = "com.github.attacktive"
 version = "1.2.3"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
-val exposedVersion = "0.50.1"
-
 plugins {
 	val kotlinPluginVersion = "2.0.0"
 
@@ -27,6 +25,8 @@ repositories {
 }
 
 dependencies {
+	val exposedVersion = "0.50.1"
+
 	implementation("org.springframework.boot", "spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
