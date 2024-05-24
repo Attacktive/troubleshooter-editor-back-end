@@ -1,9 +1,12 @@
 package com.github.attacktive.troubleshootereditor.domain.common
 
 import java.util.function.Predicate
+import com.github.attacktive.troubleshootereditor.extension.logger
 
-data class Properties(private val list: List<Property> = mutableListOf()) {
+open class Properties(private val list: List<Property> = mutableListOf()) {
 	constructor(map: Map<String, String>): this(map.map { Property(it.toPair()) }.toMutableList())
+
+	private val logger by logger()
 
 	fun containsKey(key: String) = keys().contains(key)
 	fun containsKeyThat(predicate: Predicate<String>) = keys().any { predicate.test(it) }
@@ -39,6 +42,22 @@ data class Properties(private val list: List<Property> = mutableListOf()) {
 		}
 
 		return Properties((withThese + withThose).toMutableList())
+	}
+
+	fun <T> applyPropertyChanges(diffResult: IDiffResult<T>, propertyMasterLookup: Map<String, Int>) {
+		forEach { property ->
+			val propertyIndex = propertyMasterLookup[property.key]
+			if (propertyIndex == null) {
+				logger.warn("Failed to find item property master index for \"${property.key}\"; ignoring. 😞")
+			} else {
+				when (property.diffType) {
+					DiffType.NONE -> {}
+					DiffType.ADDED -> diffResult.insert(propertyIndex, property.value)
+					DiffType.MODIFIED -> diffResult.update(propertyIndex, property.value)
+					DiffType.REMOVED -> diffResult.delete(propertyIndex)
+				}
+			}
+		}
 	}
 
 	private fun keys() = list.map { it.key }.toSet()

@@ -1,7 +1,14 @@
 package com.github.attacktive.troubleshootereditor.domain.roster
 
 import com.github.attacktive.troubleshootereditor.domain.common.Diffable
+import com.github.attacktive.troubleshootereditor.domain.common.IDiffResult
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
+import com.github.attacktive.troubleshootereditor.domain.roster.table.RosterProperties
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.update
 
 data class Roster(val id: Long, val name: String, val `class`: String, val level: Long, val exp: Long, val properties: Properties): Diffable<Roster, Long, Roster.DiffResult> {
 	override fun getId() = id
@@ -16,5 +23,25 @@ data class Roster(val id: Long, val name: String, val `class`: String, val level
 		return DiffResult(id, name, `class`, level, exp, properties)
 	}
 
-	data class DiffResult(val id: Long, val name: String?, val `class`: String?, val level: Long?, val exp: Long?, val properties: Properties)
+	data class DiffResult(override val id: Long, val name: String?, val `class`: String?, val level: Long?, val exp: Long?, val properties: Properties): IDiffResult<Long> {
+		override fun insert(propertyIndex: Int, propertyValue: String) {
+			RosterProperties.insert {
+				it[rosterId] = id
+				it[masterIndex] = propertyIndex
+				it[value] = propertyValue
+			}
+		}
+
+		override fun update(propertyIndex: Int, propertyValue: String) {
+			RosterProperties.update({ (RosterProperties.rosterId eq id) and (RosterProperties.masterIndex eq propertyIndex) }) {
+				it[value] = propertyValue
+			}
+		}
+
+		override fun delete(propertyIndex: Int) {
+			RosterProperties.deleteWhere {
+				(rosterId eq id) and (masterIndex eq propertyIndex)
+			}
+		}
+	}
 }
