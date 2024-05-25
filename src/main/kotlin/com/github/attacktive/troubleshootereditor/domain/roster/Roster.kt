@@ -10,9 +10,7 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.update
 
-data class Roster(val id: Long, val name: String, val `class`: String, val level: Long, val exp: Long, val properties: Properties): Diffable<Roster, Long, Roster.DiffResult> {
-	override fun getId() = id
-
+data class Roster(override val id: Long, val name: String, val `class`: String, val level: Long, val exp: Long, val properties: Properties): Diffable<Roster, Long, Roster.DiffResult> {
 	override fun diff(that: Roster): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val `class` = that.`class`.takeUnless { `class` == that.`class` }
