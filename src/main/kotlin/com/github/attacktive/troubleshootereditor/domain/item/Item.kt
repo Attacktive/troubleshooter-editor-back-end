@@ -11,10 +11,8 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.update
 
-data class Item(val id: Long, val type: String, val count: Long, val status: String, val properties: Properties, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult> {
+data class Item(override val id: Long, val type: String, val count: Long, val status: String, val properties: Properties, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult> {
 	constructor(id: Long, type: String, count: Long, status: String, properties: Map<String, String>, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, Properties(properties), equipmentPosition)
-
-	override fun getId() = id
 
 	override fun diff(that: Item): DiffResult {
 		val type = that.type.takeUnless { type == that.type }

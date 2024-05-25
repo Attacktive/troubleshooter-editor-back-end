@@ -18,12 +18,12 @@ inline infix fun <reified E: Enum<E>, V> ((E) -> V).findByOrNull(value: V): E? {
 
 fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
-fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.getId() == id }
+fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.id == id }
 
 fun <I, T: Diffable<T, I, D>, D: IDiffResult<I>> Collection<T>.getDiffResults(those: Collection<T>): List<D> {
 	return asSequence()
 		.mapNotNull { oldItem ->
-			val newItem = those.findById(oldItem.getId())
+			val newItem = those.findById(oldItem.id)
 			if (newItem == null) {
 				// no plan for addition nor deletion yet
 				null
