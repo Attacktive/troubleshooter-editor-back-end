@@ -3,6 +3,7 @@ package com.github.attacktive.troubleshootereditor.extension
 import java.io.File
 import kotlin.reflect.full.companionObject
 import com.github.attacktive.troubleshootereditor.domain.common.Diffable
+import com.github.attacktive.troubleshootereditor.domain.common.IDiffResult
 import com.github.attacktive.troubleshootereditor.domain.common.Identifiable
 import com.github.attacktive.troubleshootereditor.domain.common.Properties
 import com.github.attacktive.troubleshootereditor.domain.common.Property
@@ -19,7 +20,7 @@ fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
 fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.getId() == id }
 
-fun <I, T: Diffable<T, I, D>, D> Collection<T>.getDiffResults(those: Collection<T>): List<D> {
+fun <I, T: Diffable<T, I, D>, D: IDiffResult<I>> Collection<T>.getDiffResults(those: Collection<T>): List<D> {
 	return asSequence()
 		.mapNotNull { oldItem ->
 			val newItem = those.findById(oldItem.getId())
