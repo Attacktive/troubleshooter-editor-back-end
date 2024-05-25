@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.github.attacktive"
@@ -50,9 +51,9 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
+	compilerOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "21"
+		jvmTarget.set(JvmTarget.JVM_21)
 	}
 }
 
