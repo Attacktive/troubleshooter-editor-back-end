@@ -22,17 +22,20 @@ open class Properties(private val list: List<Property> = mutableListOf()) {
 
 			thoseKeys.remove(key)
 
+			val typeChanged: Property
 			val that = those.findByKey(key)
 			if (that == null) {
-				`this`.withDiffType(DiffType.REMOVED)
+				typeChanged = `this`.withDiffType(DiffType.REMOVED)
 			} else {
 				val thatValue = that.value
 				if (thisValue == thatValue) {
-					that
+					typeChanged = that
 				} else {
-					that.withDiffType(DiffType.MODIFIED)
+					typeChanged = that.withDiffType(DiffType.MODIFIED)
 				}
 			}
+
+			typeChanged
 		}
 
 		val withThose = thoseKeys.map { thatKey ->
