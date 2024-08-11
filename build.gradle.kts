@@ -43,10 +43,6 @@ dependencies {
 		exclude(module = "junit")
 		exclude(module = "junit-vintage-engine")
 		exclude(module = "mockito-core")
-		exclude(module = "json-path")
-	}
-	testImplementation("com.jayway.jsonpath", "json-path", "2.9.0") {
-		because("Dependency maven:com.jayway.jsonpath:json-path:2.8.0 is vulnerable CVE-2023-51074 5.3 Out-of-bounds Write vulnerability with Medium severity found")
 	}
 }
 
