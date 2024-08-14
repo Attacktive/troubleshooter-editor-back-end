@@ -23,19 +23,19 @@ object ItemProperties: Table("itemProperty") {
 		insertLevel(id)
 	}
 
-	fun clearExisting(id: Long) = ItemProperties.deleteWhere { itemId eq id }
+	private fun clearExisting(id: Long) = ItemProperties.deleteWhere { itemId eq id }
 
-	fun insertIsNew(id: Long, isNew: Boolean = false) = insert(id, PropertyMaster.IS_NEW, isNew)
+	private fun insertIsNew(id: Long, isNew: Boolean = false) = insert(id, PropertyMaster.IS_NEW, isNew)
 
-	fun insertOptionKey(id: Long, optionKey: String = "Extreme") = insert(id, PropertyMaster.OPTION_KEY, optionKey)
+	private fun insertOptionKey(id: Long, optionKey: String = "Extreme") = insert(id, PropertyMaster.OPTION_KEY, optionKey)
 
-	fun insertIsBound(id: Long, isBound: Boolean = true) = insert(id, PropertyMaster.BOUND, isBound)
+	private fun insertIsBound(id: Long, isBound: Boolean = true) = insert(id, PropertyMaster.BOUND, isBound)
 
-	fun insertRatio(id: Long, ratio: Float = 1F) = insert(id, PropertyMaster.RATIO, ratio)
+	private fun insertRatio(id: Long, ratio: Float = 1F) = insert(id, PropertyMaster.RATIO, ratio)
 
-	fun insertIsProtected(id: Long, isProtected: Boolean = true) = insert(id, PropertyMaster.PROTECTED, isProtected)
+	private fun insertIsProtected(id: Long, isProtected: Boolean = true) = insert(id, PropertyMaster.PROTECTED, isProtected)
 
-	fun insertLevel(id: Long, level: Int = 9) = insert(id, PropertyMaster.LEVEL, level)
+	private fun insertLevel(id: Long, level: Int = 9) = insert(id, PropertyMaster.LEVEL, level)
 
 	fun insert(id: Long, propertyMaster: PropertyMaster, propertyValue: Boolean) = insert(id, propertyMaster, propertyValue.toString())
 	fun insert(id: Long, propertyMaster: PropertyMaster, propertyValue: Number) = insert(id, propertyMaster, propertyValue.toString())
