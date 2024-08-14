@@ -16,7 +16,7 @@ inline infix fun <reified E: Enum<E>, V> ((E) -> V).findByOrNull(value: V): E? {
 	return enumValues<E>().firstOrNull { this(it) == value }
 }
 
-fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
+fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}?rewriteBatchedInserts=true"
 
 fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.id == id }
 
