@@ -126,31 +126,29 @@ class ItemService: ItemRepository {
 	override fun overwriteProperties(url: String, itemsPerPosition: Map<EquipmentPosition?, List<Item>>) {
 		Database.connect(url)
 
-		itemsPerPosition.forEach {
-			val position = it.key
-			val items = it.value
+		for (itemPerPosition in itemsPerPosition) {
+			val position = itemPerPosition.key
+			val items = itemPerPosition.value
 
 			if (position == null) {
 				logger.warn("An item whose position is ${null} is found.")
 			} else {
-				val options = position.options
-				if (options != null) {
-					if (options.size > 5) {
-						logger.warn("You can have up to 5 options! Other than the first five are going to be silently ignored.")
-					}
+				val options = position.options ?: continue
+				if (options.size > 5) {
+					logger.warn("You can have up to 5 options! Other than the first five are going to be silently ignored.")
+				}
 
-					transaction {
-						addLogger(StdOutSqlLogger)
+				transaction {
+					addLogger(StdOutSqlLogger)
 
-						items.forEach { item ->
-							ItemProperties.applyDefaultChanges(item.id)
+					items.forEach { item ->
+						ItemProperties.applyDefaultChanges(item.id)
 
-							options.mapIndexed { index, pair ->
-								val nthOptions = PropertyMaster.getNthOptions(index + 1)
+						options.mapIndexed { index, pair ->
+							val nthOptions = PropertyMaster.getNthOptions(index + 1)
 
-								ItemProperties.insert(item.id, nthOptions.first, pair.first.value)
-								ItemProperties.insert(item.id, nthOptions.second, pair.second)
-							}
+							ItemProperties.insert(item.id, nthOptions.first, pair.first.value)
+							ItemProperties.insert(item.id, nthOptions.second, pair.second)
 						}
 					}
 				}
