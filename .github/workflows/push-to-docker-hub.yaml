@@ -35,7 +35,9 @@ jobs:
         with:
           name: 'artifact'
       - name: 'Display structure of downloaded files'
-        run: 'ls -R'
+        run: |
+          pwd
+          ls -R
       - name: 'Log in to Docker Hub'
         uses: 'docker/login-action@v3'
         with:
