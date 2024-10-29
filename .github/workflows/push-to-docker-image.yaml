@@ -3,6 +3,9 @@ on:
   push:
     tags:
       - '**'
+env:
+  DOCKER_HUB_TAG_NAME: "${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }}"
+  AWS_REGION: 'ap-northeast-2'
 jobs:
   build:
     name: 'Build JAR'
@@ -26,8 +29,6 @@ jobs:
             build/libs/*.jar
             Dockerfile
   push-to-docker-hub:
-    env:
-      TAG_NAME: "${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }}"
     name: 'Push to Docker Hub'
     runs-on: 'ubuntu-latest'
     needs: 'build'
@@ -37,19 +38,17 @@ jobs:
         with:
           name: 'artifact'
       - name: 'Build Docker image'
-        run: "docker buildx build -t $TAG_NAME ."
+        run: "docker buildx build -t $DOCKER_HUB_TAG_NAME ."
       - name: 'Log in to Docker Hub'
         uses: 'docker/login-action@v3'
         with:
           username: "${{ secrets.DOCKER_HUB_USERNAME }}"
           password: "${{ secrets.DOCKER_HUB_PASSWORD }}"
       - name: 'Push Docker image to Docker Hub'
-        run: "docker image push $TAG_NAME"
+        run: "docker image push $DOCKER_HUB_TAG_NAME"
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
   push-to-aws-ecr:
-    - env:
-        AWS_REGION: 'ap-northeast-2'
     - name: 'Download JAR artifact'
       uses: 'actions/download-artifact@v4'
       with:
