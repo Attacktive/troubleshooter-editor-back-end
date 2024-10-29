@@ -67,12 +67,11 @@ jobs:
     - name: 'Log in to AWS ECR'
       id: 'login-to-aws-ecr'
       uses: 'aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a'
-    - name: 'Build Docker image'
-      run: "docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG ."
+    - name: 'Build Docker image and push to AWS ECR'
+      run: |
+        docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       env:
         ECR_REGISTRY: ${{ steps.login-to-aws-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
-    - name: 'Push Docker image to AWS ECR'
-      run: |
-        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
