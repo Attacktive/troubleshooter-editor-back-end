@@ -24,7 +24,9 @@ jobs:
         uses: 'actions/upload-artifact@v4'
         with:
           name: 'spring-boot-app'
-          path: 'build/libs/*.jar'
+          path: |
+            build/libs/*.jar
+            Dockerfile
   push-to-docker-hub:
     name: 'Push to Docker Hub'
     runs-on: 'ubuntu-latest'
@@ -44,7 +46,7 @@ jobs:
       - name: 'Build and push Docker image'
         uses: 'docker/build-push-action@v6'
         with:
-          context: '.'
+          push: true
           file: 'Dockerfile'
           tags: "${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }}"
       - name: 'Logout of Docker Hub'
