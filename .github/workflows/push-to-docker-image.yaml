@@ -49,6 +49,9 @@ jobs:
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
   push-to-aws-ecr:
+    name: 'Push to AWS ECR'
+    runs-on: 'ubuntu-latest'
+    steps:
     - name: 'Download JAR artifact'
       uses: 'actions/download-artifact@v4'
       with:
