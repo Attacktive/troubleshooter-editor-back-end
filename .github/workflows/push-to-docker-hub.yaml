@@ -21,6 +21,7 @@ jobs:
       - name: 'Upload JAR artifact'
         uses: 'actions/upload-artifact@v4'
         with:
+          name: 'artifact'
           path: |
             build/libs/*.jar
             Dockerfile
@@ -31,6 +32,8 @@ jobs:
     steps:
       - name: 'Download JAR artifact'
         uses: 'actions/download-artifact@v4'
+        with:
+          name: 'artifact'
       - name: 'Display structure of downloaded files'
         run: 'ls -R'
       - name: 'Log in to Docker Hub'
@@ -40,8 +43,7 @@ jobs:
           password: "${{ secrets.DOCKER_HUB_PASSWORD }}"
       - name: 'Build and push Docker image'
         run: |
-          pwd
-          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }} .
+          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }} ./artifact
           docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }}
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
