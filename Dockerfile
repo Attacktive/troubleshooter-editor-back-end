@@ -4,7 +4,7 @@ LABEL authors="attacktive"
 WORKDIR /app
 
 RUN pwd
-RUN find /
+RUN find / -name '*.jar'
 
 COPY "build/libs/*.jar" "troubleshooter-editor.jar"
 EXPOSE 8080
