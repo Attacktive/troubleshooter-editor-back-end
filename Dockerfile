@@ -2,6 +2,7 @@ FROM amazoncorretto:21
 LABEL authors="attacktive"
 
 WORKDIR /app
+RUN find .
 COPY "build/libs/*.jar" "troubleshooter-editor.jar"
 EXPOSE 8080
 
