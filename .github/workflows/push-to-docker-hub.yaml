@@ -46,7 +46,7 @@ jobs:
       - name: 'Build and push Docker image'
         run: |
           pwd
-          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }} ./artifact
+          docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }} .
           docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:${{ github.ref_name }}
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
