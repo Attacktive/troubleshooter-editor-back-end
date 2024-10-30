@@ -4,6 +4,6 @@ LABEL authors="attacktive"
 WORKDIR /app
 
 COPY "build/libs/*.jar" "troubleshooter-editor.jar"
-EXPOSE 8080
+EXPOSE 80 8080
 
-ENTRYPOINT ["java", "-jar", "troubleshooter-editor.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=aws", "troubleshooter-editor.jar"]
