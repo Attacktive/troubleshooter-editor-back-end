@@ -1,4 +1,4 @@
-name: 'Push to Docker Hub'
+name: 'Push to Docker Image Registries'
 on:
   push:
     tags:
@@ -46,7 +46,9 @@ jobs:
           username: "${{ secrets.DOCKER_HUB_USERNAME }}"
           password: "${{ secrets.DOCKER_HUB_PASSWORD }}"
       - name: 'Push Docker image to Docker Hub'
-        run: "docker image push $DOCKER_HUB_TAG_NAME"
+        run: |
+          docker image push $DOCKER_HUB_TAG_NAME
+          docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:latest
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
   push-to-aws-ecr:
@@ -72,6 +74,8 @@ jobs:
         docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest
+        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
       env:
         ECR_REGISTRY: ${{ steps.login-to-aws-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
