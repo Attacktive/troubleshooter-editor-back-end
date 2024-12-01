@@ -23,8 +23,7 @@ jobs:
         run: 'echo "FILE_NAME=$(printf %s $(ls))" >> $GITHUB_OUTPUT'
       - name: 'Copy to the cloud'
         run: |
-          mkdir ~/.ssh/
-          ssh-keygen -R 211.188.52.216
+          mkdir ~/.ssh
           ssh-keyscan -H 211.188.52.216
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
