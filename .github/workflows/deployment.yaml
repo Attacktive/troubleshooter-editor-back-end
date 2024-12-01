@@ -24,6 +24,7 @@ jobs:
       - name: 'Copy to the cloud'
         run: |
           mkdir ~/.ssh/
+          ssh-keyscan -H 211.188.52.216
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           scp $SOURCE $DESTINATION
