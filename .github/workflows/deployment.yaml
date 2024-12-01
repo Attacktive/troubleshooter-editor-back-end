@@ -20,8 +20,6 @@ jobs:
         run: 'cd build/libs'
       - id: 'getArchiveFileName'
         name: 'Get archive file name'
-        run: 'ls >> $GITHUB_OUTPUT'
+        run: 'printf "%s" "$(ls)" >> $GITHUB_OUTPUT'
       - name: 'Copy to the cloud'
-        run: "scp build/libs/$FILE_NAME ${{ secrets.SSH_USERNAME }}@211.188.52.216:/home/${{ secrets.SSH_USERNAME }}/troubleshooter-editor-back-end"
-        env:
-          FILE_NAME: "${{ steps.getArchiveFileName }}"
+        run: "scp build/libs/${{ steps.getArchiveFileName }} ${{ secrets.SSH_USERNAME }}@211.188.52.216:/home/${{ secrets.SSH_USERNAME }}/troubleshooter-editor-back-end"
