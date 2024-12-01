@@ -22,4 +22,4 @@ jobs:
         name: 'Get archive file name'
         run: 'printf "%s" "$(ls)" >> $GITHUB_OUTPUT'
       - name: 'Copy to the cloud'
-        run: "scp build/libs/${{ steps.getArchiveFileName }} ${{ secrets.SSH_USERNAME }}@211.188.52.216:/home/${{ secrets.SSH_USERNAME }}/troubleshooter-editor-back-end"
+        run: "scp build/libs/${{ steps.getArchiveFileName.outputs.stdout }} ${{ secrets.SSH_USERNAME }}@211.188.52.216:/home/${{ secrets.SSH_USERNAME }}/troubleshooter-editor-back-end"
