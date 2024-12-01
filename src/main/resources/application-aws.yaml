@@ -1,8 +1,2 @@
 server:
   port: 80
-
-app:
-  cors:
-    origins:
-      - 'https://attacktive.github.io'
-      - 'http://localhost:3000'
