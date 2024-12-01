@@ -1,0 +1,25 @@
+name: 'Deploy to the Cloud'
+on:
+  push:
+    branches: ["main"]
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: 'Set up JDK 21'
+        uses: 'actions/setup-java@v4'
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: 'Setup Gradle'
+        uses: 'gradle/actions/setup-gradle@v4'
+      - name: 'Build with Gradle'
+        run: './gradlew clean bootJar'
+      - name: 'Change working directory'
+        run: 'cd build/libs'
+      - id: 'getArchiveFileName'
+        name: 'Get archive file name'
+        run: 'ls > $GITHUB_OUTPUT'
+      - name: 'Copy to the cloud'
+        run: "scp build/libs/${{ steps.getArchiveFileName }} ${{ secrets.SSH_USERNAME }}@211.188.52.216:/home/${{ secrets.SSH_USERNAME }}/troubleshooter-editor-back-end"
