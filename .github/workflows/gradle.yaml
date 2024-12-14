@@ -17,7 +17,7 @@ permissions:
   contents: 'read'
 
 jobs:
-  build:
+  test:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: 'actions/checkout@v4'
@@ -31,4 +31,10 @@ jobs:
       - name: 'Build with Gradle'
         run: './gradlew compileKotlin compileTestKotlin'
       - name: 'Run tests with Gradle'
-        run: './gradlew test'
+        run: './gradlew test jacocoTestReport'
+      - name: 'Add coverage report to job summary'
+        run: |
+          echo "### Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat build/reports/jacoco/test/html/index.html | grep -A 5 "Total.*[0-9]\+" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

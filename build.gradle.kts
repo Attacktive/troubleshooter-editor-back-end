@@ -13,6 +13,7 @@ plugins {
 	kotlin("jvm") version kotlinPluginVersion
 	kotlin("plugin.spring") version kotlinPluginVersion
 	kotlin("plugin.jpa") version kotlinPluginVersion
+	jacoco
 }
 
 configurations {
@@ -55,4 +56,27 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.test {
+	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+}
+
+tasks.jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = "0.5".toBigDecimal()
+			}
+		}
+	}
 }
