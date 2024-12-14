@@ -37,7 +37,7 @@ class SqliteServiceTest(@Autowired private val sqliteUseCase: SqliteUseCase) {
 
 		val inboundRoster = InboundRoster(
 			id = 1L,
-			name = "Albus",
+			name = "Albus: renamed",
 			`class` = "Albus",
 			level = 5L,
 			exp = 1000L,
@@ -76,7 +76,7 @@ class SqliteServiceTest(@Autowired private val sqliteUseCase: SqliteUseCase) {
 
 			val editedRoster = editedData.rosters.find { it.id == inboundRoster.id }
 			assertNotNull(editedRoster)
-			assertEquals("Albus", editedRoster.name)
+			assertEquals("Albus: renamed", editedRoster.name)
 			assertEquals("Albus", editedRoster.`class`)
 			assertEquals(5L, editedRoster.level)
 			assertEquals(1000L, editedRoster.exp)
