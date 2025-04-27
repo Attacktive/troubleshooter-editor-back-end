@@ -53,32 +53,32 @@ jobs:
           docker image push ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:latest
       - name: 'Logout of Docker Hub'
         run: 'docker logout'
-  push-to-aws-ecr:
-    name: 'Push to AWS ECR'
-    runs-on: 'ubuntu-latest'
-    needs: 'build'
-    steps:
-    - name: 'Download JAR artifact'
-      uses: 'actions/download-artifact@v4'
-      with:
-        name: 'artifact'
-    - name: 'Configure AWS credentials'
-      uses: 'aws-actions/configure-aws-credentials@f157a6574f0ccfe5fd8879947413fc0811009186'
-      with:
-        aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
-        aws-secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-        aws-region: "${{ env.AWS_REGION }}"
-    - name: 'Log in to AWS ECR'
-      id: 'login-to-aws-ecr'
-      uses: 'aws-actions/amazon-ecr-login@f9441e51686002eb8c6f13bdda4d6a2ef947cc77'
-    - name: 'Build Docker image and push to AWS ECR'
-      run: |
-        docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG .
-        docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest
-        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
-      env:
-        ECR_REGISTRY: ${{ steps.login-to-aws-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
+#  push-to-aws-ecr:
+#    name: 'Push to AWS ECR'
+#    runs-on: 'ubuntu-latest'
+#    needs: 'build'
+#    steps:
+#    - name: 'Download JAR artifact'
+#      uses: 'actions/download-artifact@v4'
+#      with:
+#        name: 'artifact'
+#    - name: 'Configure AWS credentials'
+#      uses: 'aws-actions/configure-aws-credentials@f157a6574f0ccfe5fd8879947413fc0811009186'
+#      with:
+#        aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+#        aws-secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+#        aws-region: "${{ env.AWS_REGION }}"
+#    - name: 'Log in to AWS ECR'
+#      id: 'login-to-aws-ecr'
+#      uses: 'aws-actions/amazon-ecr-login@f9441e51686002eb8c6f13bdda4d6a2ef947cc77'
+#    - name: 'Build Docker image and push to AWS ECR'
+#      run: |
+#        docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG .
+#        docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest .
+#        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG
+#        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+#        docker push $ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest
+#        echo "image=$ECR_REGISTRY/$AWS_ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+#      env:
+#        ECR_REGISTRY: ${{ steps.login-to-aws-ecr.outputs.registry }}
+#        IMAGE_TAG: ${{ github.sha }}
