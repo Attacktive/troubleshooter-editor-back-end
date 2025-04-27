@@ -70,7 +70,7 @@ jobs:
         aws-region: "${{ env.AWS_REGION }}"
     - name: 'Log in to AWS ECR'
       id: 'login-to-aws-ecr'
-      uses: 'aws-actions/amazon-ecr-login@292c88581676a2a6d95f1312c0517f24577eca53'
+      uses: 'aws-actions/amazon-ecr-login@f9441e51686002eb8c6f13bdda4d6a2ef947cc77'
     - name: 'Build Docker image and push to AWS ECR'
       run: |
         docker build -t $ECR_REGISTRY/$AWS_ECR_REPOSITORY:$IMAGE_TAG .
