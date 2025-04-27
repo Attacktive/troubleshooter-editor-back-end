@@ -63,7 +63,7 @@ jobs:
       with:
         name: 'artifact'
     - name: 'Configure AWS credentials'
-      uses: 'aws-actions/configure-aws-credentials@97834a484a5ab3c40fa9e2eb40fcf8041105a573'
+      uses: 'aws-actions/configure-aws-credentials@f157a6574f0ccfe5fd8879947413fc0811009186'
       with:
         aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
         aws-secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
