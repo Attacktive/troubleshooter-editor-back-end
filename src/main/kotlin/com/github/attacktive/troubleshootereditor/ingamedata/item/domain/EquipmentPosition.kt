@@ -1,5 +1,8 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.item.domain
 
+/**
+ * This enum is used for JSON deserialization.
+ */
 @Suppress("unused")
 enum class EquipmentPosition(val value: String, val options: List<Pair<ItemOption, Int>>?) {
 	WEAPON("Weapon", ItemOption.forWeapons),
