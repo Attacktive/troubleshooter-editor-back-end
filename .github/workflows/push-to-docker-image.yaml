@@ -43,7 +43,7 @@ jobs:
           docker buildx build -t $DOCKER_HUB_TAG_NAME .
           docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/troubleshooter-editor-back-end:latest .
       - name: 'Log in to Docker Hub'
-        uses: 'docker/login-action@v3'
+        uses: 'docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772'
         with:
           username: "${{ secrets.DOCKER_HUB_USERNAME }}"
           password: "${{ secrets.DOCKER_HUB_PASSWORD }}"
