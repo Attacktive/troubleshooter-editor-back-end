@@ -128,7 +128,6 @@ class ItemService: ItemRepository {
 
 		for (itemPerPosition in itemsPerPosition) {
 			val position = itemPerPosition.key
-			val items = itemPerPosition.value
 
 			if (position == null) {
 				logger.warn("An item whose position is ${null} is found.")
@@ -141,7 +140,7 @@ class ItemService: ItemRepository {
 				transaction {
 					addLogger(StdOutSqlLogger)
 
-					items.forEach { item ->
+					itemPerPosition.value.forEach { item ->
 						ItemProperties.applyDefaultChanges(item.id)
 
 						options.mapIndexed { index, pair ->
