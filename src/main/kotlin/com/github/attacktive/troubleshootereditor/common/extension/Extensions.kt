@@ -1,6 +1,5 @@
 package com.github.attacktive.troubleshootereditor.common.extension
 
-import java.io.File
 import kotlin.reflect.full.companionObject
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Diffable
 import com.github.attacktive.troubleshootereditor.ingamedata.common.IDiffResult
@@ -15,8 +14,6 @@ fun Iterable<Property>.toProperties() = Properties(toMutableList())
 inline infix fun <reified E: Enum<E>, V> ((E) -> V).findByOrNull(value: V): E? {
 	return enumValues<E>().firstOrNull { this(it) == value }
 }
-
-fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
 
 fun <I, T: Identifiable<I>> Collection<T>.findById(id: I): T? = asSequence().find { it.id == id }
 

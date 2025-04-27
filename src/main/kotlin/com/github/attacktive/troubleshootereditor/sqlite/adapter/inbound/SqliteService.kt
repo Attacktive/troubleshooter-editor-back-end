@@ -1,7 +1,6 @@
 package com.github.attacktive.troubleshootereditor.sqlite.adapter.inbound
 
 import java.io.File
-import com.github.attacktive.troubleshootereditor.common.extension.getJdbcUrl
 import com.github.attacktive.troubleshootereditor.ingamedata.common.InboundSaveData
 import com.github.attacktive.troubleshootereditor.ingamedata.common.SaveData
 import com.github.attacktive.troubleshootereditor.ingamedata.company.port.outbound.CompanyRepository
@@ -54,3 +53,5 @@ class SqliteService (private val companyRepository: CompanyRepository, private v
 		return file.absolutePath
 	}
 }
+
+private fun File.getJdbcUrl() = "jdbc:sqlite:${absolutePath}"
