@@ -50,13 +50,14 @@ open class Properties(private val list: List<Property> = mutableListOf()) {
 			val propertyIndex = propertyMasterLookup[property.key]
 			if (propertyIndex == null) {
 				logger.warn("Failed to find item property master index for \"${property.key}\"; ignoring. 😞")
-			} else {
-				when (property.diffType) {
-					DiffType.NONE -> {}
-					DiffType.ADDED -> diffResult.insert(propertyIndex, property.value)
-					DiffType.MODIFIED -> diffResult.update(propertyIndex, property.value)
-					DiffType.REMOVED -> diffResult.delete(propertyIndex)
-				}
+				continue
+			}
+
+			when (property.diffType) {
+				DiffType.NONE -> {}
+				DiffType.ADDED -> diffResult.insert(propertyIndex, property.value)
+				DiffType.MODIFIED -> diffResult.update(propertyIndex, property.value)
+				DiffType.REMOVED -> diffResult.delete(propertyIndex)
 			}
 		}
 	}
