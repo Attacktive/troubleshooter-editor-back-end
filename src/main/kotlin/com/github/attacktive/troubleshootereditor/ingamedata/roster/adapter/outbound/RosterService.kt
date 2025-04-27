@@ -35,7 +35,6 @@ class RosterService: RosterRepository {
 				.map { resultRows ->
 					val properties = resultRows.map { resultRow -> resultRow[RosterPropertyMaster.name] to resultRow[RosterProperties.value] }
 						.map { Property(it) }
-						.toMutableList()
 						.toProperties()
 
 					val resultRow = resultRows[0]

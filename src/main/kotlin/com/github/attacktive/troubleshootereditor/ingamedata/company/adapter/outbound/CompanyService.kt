@@ -34,7 +34,6 @@ class CompanyService: CompanyRepository {
 				.where { CompanyPropertyMaster.masterIndex eq CompanyProperties.masterIndex }
 				.map { it[CompanyPropertyMaster.masterName] to it[CompanyProperties.cpValue] }
 				.map { Property(it) }
-				.toMutableList()
 				.toProperties()
 
 			Company(company[Companies.id], company[Companies.name], company[Companies.vill], properties)

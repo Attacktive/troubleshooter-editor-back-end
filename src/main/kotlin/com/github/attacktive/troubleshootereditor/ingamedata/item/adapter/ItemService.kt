@@ -43,7 +43,6 @@ class ItemService: ItemRepository {
 				.map { resultRows ->
 					val properties = resultRows.map { resultRow -> resultRow[ItemPropertyMaster.name] to resultRow[ItemProperties.value] }
 						.map { Property(it) }
-						.toMutableList()
 						.toProperties()
 
 					val resultRow = resultRows[0]
@@ -69,7 +68,6 @@ class ItemService: ItemRepository {
 				.map { resultRows ->
 					val properties = resultRows.map { resultRow -> resultRow[ItemPropertyMaster.name] to resultRow[ItemProperties.value] }
 						.map { Property(it) }
-						.toMutableList()
 						.toProperties()
 
 					val resultRow = resultRows[0]
