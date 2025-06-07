@@ -27,13 +27,15 @@ repositories {
 }
 
 dependencies {
+	val exposedVersion = "0.61.0"
+
 	implementation("org.springframework.boot", "spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module", "jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
 	implementation("org.xerial", "sqlite-jdbc")
-	implementation("org.jetbrains.exposed", "exposed-core", "0.61.0")
-	implementation("org.jetbrains.exposed", "exposed-jdbc", "0.61.0")
-	implementation("org.jetbrains.exposed", "exposed-dao", "0.61.0")
+	implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
+	implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
+	implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
 
 	annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
