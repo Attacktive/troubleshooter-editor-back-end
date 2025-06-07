@@ -1,6 +1,8 @@
 FROM amazoncorretto:21
 LABEL authors="attacktive"
 
+RUN ./gradlew bootJar
+
 WORKDIR /app
 
 COPY "build/libs/*.jar" "troubleshooter-editor.jar"
