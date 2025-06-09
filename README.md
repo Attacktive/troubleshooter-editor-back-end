@@ -4,6 +4,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/attacktive/troubleshooter-editor-back-end/badge)](https://www.codefactor.io/repository/github/attacktive/troubleshooter-editor-back-end)
 [![CodeQL](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/codeql.yaml/badge.svg)](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/codeql.yaml)
 [![Java CI with Gradle](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/gradle.yaml/badge.svg)](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/gradle.yaml)
+[![Push to Docker Image Registries](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/push-image.yaml/badge.svg)](https://github.com/Attacktive/troubleshooter-editor-back-end/actions/workflows/push-image.yaml)
 
 It's the back-end of a save file editor of the game Troubleshooter: Abandoned Children.
 
