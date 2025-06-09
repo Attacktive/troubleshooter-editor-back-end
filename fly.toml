@@ -10,6 +10,9 @@ cpu_kind = "shared"
 cpus = 1
 memory = "256MB"
 
+[http_service]
+internal_port = 8080
+
 [[http_service.checks]]
 interval = "60s"
 protocol = "http"
