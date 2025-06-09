@@ -1,4 +1,4 @@
-name: 'Push to Docker Image Registries'
+name: 'Push Image'
 on:
   push:
     tags:
