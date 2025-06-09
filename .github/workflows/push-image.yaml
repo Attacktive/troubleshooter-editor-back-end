@@ -29,6 +29,35 @@ jobs:
           path: |
             build/libs/*.jar
             Dockerfile
+  push-to-github:
+    name: 'Push to GitHub'
+    runs-on: 'ubuntu-latest'
+    needs: 'build'
+    steps:
+      - name: 'Download JAR artifact'
+        uses: 'actions/download-artifact@v4'
+        with:
+          name: 'artifact'
+      - name: 'Authenticate to GitHub Packages'
+        uses: 'docker/login-action@6d4b68b490aef8836e8fb5e50ee7b3bdfa5894f0'
+        with:
+          registry: 'ghcr.io'
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+      - name: 'Extract metadata (tags, labels) for Docker'
+        id: 'meta'
+        uses: 'docker/metadata-action@418e4b98bf2841bd337d0b24fe63cb36dc8afa55'
+        with:
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+      - name: 'Build and push Docker image'
+        id: 'push'
+        uses: 'docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83'
+        with:
+          context: .
+          push: true
+          tags: "${{ steps.meta.outputs.tags }}"
+          labels: "${{ steps.meta.outputs.labels }}"
+
   push-to-docker-hub:
     name: 'Push to Docker Hub'
     runs-on: 'ubuntu-latest'
