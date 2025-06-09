@@ -13,10 +13,6 @@ memory = "256MB"
 [http_service]
 internal_port = 80
 
-[[services.ports]]
-handlers = ["tls"]
-port = 443
-
 [[http_service.checks]]
 interval = "60s"
 protocol = "http"
@@ -24,3 +20,7 @@ method = "GET"
 path = "/"
 grace_period = "10s"
 timeout = "5s"
+
+[[services.ports]]
+handlers = ["tls"]
+port = 443
