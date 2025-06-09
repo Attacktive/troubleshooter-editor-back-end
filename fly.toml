@@ -1,21 +1,26 @@
 app = "troubleshooter-editor-back-end"
 primary_region = "sjc"
+swap_size_mb = 1024
 
 [deploy]
 strategy = "rolling"
 
-[deploy.release_command_vm]
+[[vm]]
+cpu_kind = "shared"
 cpus = 1
 memory = "256MB"
 
 [http_service]
-internal_port = 8080
+internal_port = 80
 
-[[services.http_checks]]
-interval = 60_000
-grace_period = "10s"
+[[services.ports]]
+handlers = ["tls"]
+port = 443
+
+[[http_service.checks]]
+interval = "60s"
 protocol = "http"
-method = "get"
+method = "GET"
 path = "/"
-timeout = 5000
-
+grace_period = "10s"
+timeout = "5s"

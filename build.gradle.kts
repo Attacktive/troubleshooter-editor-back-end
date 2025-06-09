@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.github.attacktive"
-version = "1.2.13"
+version = "1.2.14"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 plugins {
