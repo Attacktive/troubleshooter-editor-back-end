@@ -1,0 +1,21 @@
+app = "troubleshooter-editor-back-end"
+primary_region = "sjc"
+
+[deploy]
+strategy = "rolling"
+
+[deploy.release_command_vm]
+cpus = 1
+memory = "256MB"
+
+[http_service]
+internal_port = 8080
+
+[[services.http_checks]]
+interval = 60_000
+grace_period = "10s"
+protocol = "http"
+method = "get"
+path = "/"
+timeout = 5000
+
