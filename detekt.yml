@@ -1,6 +1,11 @@
 config:
   validation: true
   warningsAsErrors: false
+  excludes: '*.gradle,*.gradle.kts'
+
+complexity:
+  StringLiteralDuplication:
+    active: true
 
 style:
   UnnecessaryParentheses:
