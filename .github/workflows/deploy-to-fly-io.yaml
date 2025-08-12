@@ -13,7 +13,7 @@ jobs:
       FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}"
     steps:
       - name: 'Checkout repository'
-        uses: 'actions/checkout@v4'
+        uses: 'actions/checkout@v5'
       - name: 'Setup flyctl'
         uses: 'superfly/flyctl-actions/setup-flyctl@63da3ecc5e2793b98a3f2519b3d75d4f4c11cec2'
       - name: 'Set scale count'
