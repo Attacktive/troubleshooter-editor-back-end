@@ -14,14 +14,6 @@ updates:
       - 'CI/CD'
     commit-message:
       prefix: 'ci'
-  - package-ecosystem: 'github-actions'
-    directory: '/'
-    schedule:
-      interval: 'daily'
-    labels:
-      - 'CI/CD'
-    commit-message:
-      prefix: 'ci'
   - package-ecosystem: 'gradle'
     directory: '/'
     schedule:
