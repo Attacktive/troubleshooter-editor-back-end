@@ -14,12 +14,13 @@ import com.github.attacktive.troubleshootereditor.ingamedata.item.domain.Equipme
 import com.github.attacktive.troubleshootereditor.ingamedata.item.domain.Item
 import com.github.attacktive.troubleshootereditor.ingamedata.item.domain.PropertyMaster
 import com.github.attacktive.troubleshootereditor.ingamedata.item.port.outbound.ItemRepository
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.StdOutSqlLogger
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.update
 import org.springframework.stereotype.Service
 
 @Service

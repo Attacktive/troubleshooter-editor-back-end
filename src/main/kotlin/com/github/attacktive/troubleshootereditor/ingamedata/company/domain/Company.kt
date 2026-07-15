@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonGetter
 import com.github.attacktive.troubleshootereditor.ingamedata.common.IDiffResult
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Properties
 import com.github.attacktive.troubleshootereditor.ingamedata.company.adapter.outbound.table.CompanyProperties
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.update
 
 data class Company(val id: Int, val name: String, val vill: Long, val properties: Properties) {
 	constructor(id: Int, name: String, vill: Long, properties: Map<String, String>): this(id, name, vill, Properties(properties))

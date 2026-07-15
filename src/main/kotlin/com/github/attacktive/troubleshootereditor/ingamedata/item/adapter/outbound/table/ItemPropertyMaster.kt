@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.item.adapter.outbound.table
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object ItemPropertyMaster: Table("itemPropertyMaster") {
 	val index = integer("masterIndex")

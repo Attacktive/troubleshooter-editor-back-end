@@ -1,10 +1,10 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.item.adapter.outbound.table
 
 import com.github.attacktive.troubleshootereditor.ingamedata.item.domain.PropertyMaster
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
 
 object ItemProperties: Table("itemProperty") {
 	val itemId = long("itemID") references Items.id

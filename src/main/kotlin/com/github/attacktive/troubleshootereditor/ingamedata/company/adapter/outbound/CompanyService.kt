@@ -7,12 +7,13 @@ import com.github.attacktive.troubleshootereditor.ingamedata.company.adapter.out
 import com.github.attacktive.troubleshootereditor.ingamedata.company.adapter.outbound.table.CompanyPropertyMaster
 import com.github.attacktive.troubleshootereditor.ingamedata.company.domain.Company
 import com.github.attacktive.troubleshootereditor.ingamedata.company.port.outbound.CompanyRepository
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.StdOutSqlLogger
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.update
 import org.springframework.stereotype.Service
 
 @Service

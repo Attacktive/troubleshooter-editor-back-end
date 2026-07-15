@@ -8,12 +8,13 @@ import com.github.attacktive.troubleshootereditor.ingamedata.roster.adapter.outb
 import com.github.attacktive.troubleshootereditor.ingamedata.roster.adapter.outbound.table.Rosters
 import com.github.attacktive.troubleshootereditor.ingamedata.roster.domain.Roster
 import com.github.attacktive.troubleshootereditor.ingamedata.roster.port.outbound.RosterRepository
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.StdOutSqlLogger
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.select
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.update
 import org.springframework.stereotype.Service
 
 @Service

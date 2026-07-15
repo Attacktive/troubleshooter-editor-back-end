@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.roster.adapter.outbound.table
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object RosterProperties: Table("rosterProperty") {
 	val rosterId = long("rosterID") references Rosters.id

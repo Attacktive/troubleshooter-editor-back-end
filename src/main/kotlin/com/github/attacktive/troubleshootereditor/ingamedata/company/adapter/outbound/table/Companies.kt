@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.company.adapter.outbound.table
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object Companies: Table("company") {
 	val id = integer("companyID")

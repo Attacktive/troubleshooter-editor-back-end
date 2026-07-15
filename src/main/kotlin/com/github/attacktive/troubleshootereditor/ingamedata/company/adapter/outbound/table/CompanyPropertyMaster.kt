@@ -1,6 +1,6 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.company.adapter.outbound.table
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object CompanyPropertyMaster: Table("companyPropertyMaster") {
 	val masterIndex = integer("masterIndex") references CompanyProperties.masterIndex
