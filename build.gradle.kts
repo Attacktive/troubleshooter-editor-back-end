@@ -35,7 +35,6 @@ dependencies {
 	implementation("org.xerial:sqlite-jdbc")
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-	implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
