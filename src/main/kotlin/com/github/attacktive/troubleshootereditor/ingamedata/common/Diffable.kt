@@ -1,5 +1,5 @@
 package com.github.attacktive.troubleshootereditor.ingamedata.common
 
-interface Diffable<T, I, D>: Identifiable<I> {
+interface Diffable<T, D> {
 	fun diff(that: T): D
 }

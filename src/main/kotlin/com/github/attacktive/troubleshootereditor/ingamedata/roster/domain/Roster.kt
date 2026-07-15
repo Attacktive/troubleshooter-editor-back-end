@@ -2,6 +2,7 @@ package com.github.attacktive.troubleshootereditor.ingamedata.roster.domain
 
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Diffable
 import com.github.attacktive.troubleshootereditor.ingamedata.common.IDiffResult
+import com.github.attacktive.troubleshootereditor.ingamedata.common.Identifiable
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Properties
 import com.github.attacktive.troubleshootereditor.ingamedata.roster.adapter.outbound.table.RosterProperties
 import org.jetbrains.exposed.v1.core.and
@@ -10,7 +11,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 
-data class Roster(override val id: Long, val name: String, val `class`: String, val level: Long, val exp: Long, val properties: Properties): Diffable<Roster, Long, Roster.DiffResult> {
+data class Roster(override val id: Long, val name: String, val `class`: String, val level: Long, val exp: Long, val properties: Properties): Identifiable<Long>, Diffable<Roster, Roster.DiffResult> {
 	override fun diff(that: Roster): DiffResult {
 		val name = that.name.takeUnless { name == that.name }
 		val `class` = that.`class`.takeUnless { `class` == that.`class` }

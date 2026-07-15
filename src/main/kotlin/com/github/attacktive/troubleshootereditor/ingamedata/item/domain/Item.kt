@@ -3,6 +3,7 @@ package com.github.attacktive.troubleshootereditor.ingamedata.item.domain
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Diffable
 import com.github.attacktive.troubleshootereditor.ingamedata.common.IDiffResult
+import com.github.attacktive.troubleshootereditor.ingamedata.common.Identifiable
 import com.github.attacktive.troubleshootereditor.ingamedata.common.Properties
 import com.github.attacktive.troubleshootereditor.ingamedata.item.adapter.outbound.table.ItemProperties
 import org.jetbrains.exposed.v1.core.and
@@ -11,7 +12,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 
-data class Item(override val id: Long, val type: String, val count: Long, val status: String, val properties: Properties, var equipmentPosition: EquipmentPosition? = null): Diffable<Item, Long, Item.DiffResult> {
+data class Item(override val id: Long, val type: String, val count: Long, val status: String, val properties: Properties, var equipmentPosition: EquipmentPosition? = null): Identifiable<Long>, Diffable<Item, Item.DiffResult> {
 	constructor(id: Long, type: String, count: Long, status: String, properties: Map<String, String>, equipmentPosition: EquipmentPosition? = null): this(id, type, count, status, Properties(properties), equipmentPosition)
 
 	override fun diff(that: Item): DiffResult {
