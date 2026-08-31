@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-	val exposedVersion = "1.4.0"
+	val exposedVersion = "1.5.0"
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
